@@ -1,0 +1,506 @@
+/* General Page Styles */
+body {
+    background-color: #ff8533; /* Page background color */
+    font-family: 'Arial', sans-serif;
+    margin: 0;
+    padding: 0;
+    color: #333;
+}
+
+/* Navbar Styles */
+.navbar {
+    background-color: #ff6600 !important; /* Navbar (header) background color */
+    border-bottom: none; /* Removed the white border line */
+    margin-bottom: 20px;
+}
+
+.navbar .navbar-brand {
+    color: #ffffff !important;
+    font-weight: 600;
+    font-size: 1.2rem;
+}
+
+.navbar .navbar-brand:hover {
+    color: #ffffff !important;
+}
+
+.navbar-nav .navbar-nav {
+    margin-right: 15px;
+}
+
+/* Navbar link color */
+.navbar-nav .nav-link {
+    color: #ffffff !important; /* Set default link color to white */
+}
+
+.navbar-nav .nav-link:hover {
+    color: #ff8533 !important; /* Set hover color to the page background color */
+}
+
+/* Card Styles */
+.card {
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    margin-bottom: 30px;
+}
+
+.card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+}
+
+.card-body {
+    background-color: #ffffff;
+    padding: 20px;
+}
+
+.card-title {
+    font-weight: bold;
+    font-size: 1.3rem;
+    color: #333;
+}
+
+.card-text {
+    font-size: 1rem;
+    color: #555;
+    margin-bottom: 15px;
+}
+
+.card-footer {
+    text-align: right;
+    padding: 10px;
+}
+
+/* Button Styles */
+.btn {
+    padding: 12px 20px;
+    font-size: 1rem;
+    border-radius: 4px;
+    transition: background-color 0.3s ease;
+}
+
+.btn-primary {
+    background-color: #007bff;
+    border: 1px solid #007bff;
+    color: white;
+}
+
+.btn-primary:hover {
+    background-color: #0056b3;
+    border-color: #0056b3;
+}
+
+.btn-info {
+    background-color: #17a2b8;
+    border: 1px solid #17a2b8;
+    color: white;
+}
+
+.btn-info:hover {
+    background-color: #138496;
+    border-color: #117a8b;
+}
+
+.btn-danger {
+    background-color: #dc3545;
+    border: 1px solid #dc3545;
+    color: white;
+}
+
+.btn-danger:hover {
+    background-color: #c82333;
+    border-color: #bd2130;
+}
+
+/* Responsive Card Layout */
+@media (max-width: 768px) {
+    .card {
+        margin-bottom: 15px;
+    }
+
+    .navbar-nav {
+        margin-top: 10px;
+    }
+
+    .container {
+        padding-left: 15px;
+        padding-right: 15px;
+    }
+}
+
+/* Flash Message Styling for Warnings */
+.alert-warning {
+    background-color: #fff3cd;
+    color: #856404;
+    border-radius: 5px;
+    padding: 12px;
+}
+
+.alert-dismissible .btn-close {
+    position: absolute;
+    top: 0;
+    right: 0;
+}
+
+/* Form Container Styling */
+.form-container {
+    background-color: #fff;
+    padding: 30px;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Form Input Styles */
+.form-label {
+    font-size: 1.1rem;
+    font-weight: 600;
+}
+
+.form-control {
+    border-radius: 4px;
+    border: 1px solid #ddd;
+    padding: 10px;
+    font-size: 1rem;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.form-control:focus {
+    border-color: #007bff;
+    box-shadow: 0 0 8px rgba(0, 123, 255, 0.5);
+}
+
+/* Button Styles */
+button {
+    width: 100%;
+    padding: 12px;
+    font-size: 1.1rem;
+    font-weight: 600;
+    border-radius: 4px;
+    background-color: #ff6600; /* Post button color */
+    color: white;
+    border: none;
+}
+
+button:hover {
+    background-color: #e65c00;
+}
+
+/* Ensuring all text including headings is black */
+body, h1, h2, h3, h4, h5, h6, p, .navbar-brand, .card-title, .card-text, label {
+    color: #000000;
+}
+
+/* Ensure the navbar text is black */
+.navbar, .navbar .navbar-brand, .navbar-nav .nav-link {
+    color: #000000 !important;
+}
+
+/* Hover state for navbar items */
+.navbar .navbar-brand:hover, .navbar-nav .nav-link:hover {
+    color: #000000 !important;
+}
+
+/* Active state for navbar items */
+.navbar .navbar-nav .nav-link.active {
+    color: #000000 !important;
+}
+/* General Page Styles */
+body {
+    background-color: #ff8533; /* Page background color */
+    font-family: 'Arial', sans-serif;
+    margin: 0;
+    padding: 0;
+    color: #333;
+}
+
+/* Navbar Styles */
+.navbar {
+    background-color: #000000; /* Initial black background */
+    transition: background-color 0.5s ease-in-out; /* Smooth transition to orange */
+    border-bottom: none; /* Remove the bottom border */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Soft shadow to give it a floating effect */
+    margin-bottom: 20px;
+    padding: 10px 0;
+}
+
+.navbar.scrolled {
+    background-color: #ff6600; /* Turn orange when scrolled or after interaction */
+}
+
+/* Navbar Brand */
+.navbar .navbar-brand {
+    color: #ffffff !important; /* Navbar brand text color */
+    font-weight: 700; /* Bold the brand name */
+    font-size: 1.5rem; /* Larger font size for brand */
+    text-transform: uppercase; /* Make the brand text uppercase */
+    letter-spacing: 1px; /* Add some spacing between letters for style */
+    transition: color 0.3s ease;
+}
+
+.navbar .navbar-brand:hover {
+    color: #ff8533 !important; /* Change brand color on hover */
+}
+
+/* Navbar Link Styles */
+.navbar-nav .nav-link {
+    color: #ffffff !important; /* Set default link color to white */
+    font-size: 1.1rem; /* Slightly larger text for the links */
+    font-weight: 500; /* Medium weight for links */
+    transition: color 0.3s ease, transform 0.3s ease; /* Smooth transition on hover */
+}
+
+.navbar-nav .nav-link:hover {
+    color: #ff8533 !important; /* Set hover color to the page background color */
+    transform: translateY(-3px); /* Add a hover effect to lift the link */
+}
+
+/* Responsive Navbar Adjustments */
+@media (max-width: 768px) {
+    .navbar-nav {
+        text-align: center; /* Center the nav items on small screens */
+    }
+}
+
+/* Active state for navbar items */
+.navbar .navbar-nav .nav-link.active {
+    color: #ff8533 !important; /* Highlight active link */
+}
+
+/* Button Styles */
+.btn {
+    padding: 12px 20px;
+    font-size: 1rem;
+    border-radius: 4px;
+    transition: background-color 0.3s ease;
+}
+
+.btn-primary {
+    background-color: #007bff;
+    border: 1px solid #007bff;
+    color: white;
+}
+
+.btn-primary:hover {
+    background-color: #0056b3;
+    border-color: #0056b3;
+}
+
+.btn-info {
+    background-color: #17a2b8;
+    border: 1px solid #17a2b8;
+    color: white;
+}
+
+.btn-info:hover {
+    background-color: #138496;
+    border-color: #117a8b;
+}
+
+.btn-danger {
+    background-color: #dc3545;
+    border: 1px solid #dc3545;
+    color: white;
+}
+
+.btn-danger:hover {
+    background-color: #c82333;
+    border-color: #bd2130;
+}
+/* General Page Styles */
+body {
+    background-color: #ff8533; /* Page background color */
+    font-family: 'Arial', sans-serif;
+    margin: 0;
+    padding: 0;
+    color: #333;
+}
+
+/* Navbar Styles */
+.navbar {
+    background-color: #000000; /* Initial black background */
+    transition: background-color 0.5s ease-in-out; /* Smooth transition to orange */
+    border-bottom: none; /* Remove the bottom border */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Soft shadow to give it a floating effect */
+    margin-bottom: 20px;
+    padding: 15px 0; /* Added padding to the navbar for better spacing */
+}
+
+.navbar.scrolled {
+    background-color: #ff6600; /* Turn orange when scrolled or after interaction */
+}
+
+/* Navbar Brand */
+.navbar .navbar-brand {
+    color: #ffffff !important; /* Navbar brand text color */
+    font-weight: 700; /* Bold the brand name */
+    font-size: 1.5rem; /* Larger font size for brand */
+    text-transform: uppercase; /* Make the brand text uppercase */
+    letter-spacing: 1px; /* Add some spacing between letters for style */
+    transition: color 0.3s ease;
+}
+
+.navbar .navbar-brand:hover {
+    color: #ff8533 !important; /* Change brand color on hover */
+}
+
+/* Navbar Link Styles */
+.navbar-nav .nav-link {
+    color: #ffffff !important; /* Set default link color to white */
+    font-size: 1.1rem; /* Slightly larger text for the links */
+    font-weight: 500; /* Medium weight for links */
+    transition: color 0.3s ease, transform 0.3s ease; /* Smooth transition on hover */
+}
+
+.navbar-nav .nav-link:hover {
+    color: #ff8533 !important; /* Set hover color to the page background color */
+    transform: translateY(-3px); /* Add a hover effect to lift the link */
+}
+
+/* Responsive Navbar Adjustments */
+@media (max-width: 768px) {
+    .navbar-nav {
+        text-align: center; /* Center the nav items on small screens */
+    }
+}
+
+/* Active state for navbar items */
+.navbar .navbar-nav .nav-link.active {
+    color: #ff8533 !important; /* Highlight active link */
+}
+
+/* Container for Centering Content */
+.container {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 30px 20px; /* Added padding for spacing around the container */
+}
+
+/* Form Container Styling */
+.form-container {
+    background-color: #fff;
+    padding: 30px;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    margin-top: 30px;
+}
+
+/* Form Input Styles */
+.form-label {
+    font-size: 1.1rem;
+    font-weight: 600;
+}
+
+.form-control {
+    border-radius: 4px;
+    border: 1px solid #ddd;
+    padding: 12px 15px; /* More padding in the form input */
+    font-size: 1rem;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.form-control:focus {
+    border-color: #007bff;
+    box-shadow: 0 0 8px rgba(0, 123, 255, 0.5);
+}
+
+/* Button Styles */
+button {
+    width: 100%;
+    padding: 14px;
+    font-size: 1.1rem;
+    font-weight: 600;
+    border-radius: 4px;
+    background-color: #ff6600; /* Post button color */
+    color: white;
+    border: none;
+}
+
+button:hover {
+    background-color: #e65c00;
+}
+
+/* General Page Styles */
+body {
+    color: #000000; /* Make text black */
+}
+
+/* Ensuring all text including headings is black */
+body, h1, h2, h3, h4, h5, h6, p, .navbar-brand, .card-title, .card-text, label {
+    color: #000000;
+}
+
+/* Ensure the navbar text is black */
+.navbar, .navbar .navbar-brand, .navbar-nav .nav-link {
+    color: #000000 !important;
+}
+
+/* Hover state for navbar items */
+.navbar .navbar-brand:hover, .navbar-nav .nav-link:hover {
+    color: #000000 !important;
+}
+
+/* Active state for navbar items */
+.navbar .navbar-nav .nav-link.active {
+    color: #000000 !important;
+}
+
+/* Card Styles */
+.card {
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    margin-bottom: 30px;
+}
+
+.card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+}
+
+.card-body {
+    background-color: #ffffff;
+    padding: 20px;
+}
+
+.card-title {
+    font-weight: bold;
+    font-size: 1.3rem;
+    color: #333;
+}
+
+.card-text {
+    font-size: 1rem;
+    color: #555;
+    margin-bottom: 15px;
+}
+
+.card-footer {
+    text-align: right;
+    padding: 10px;
+}
+
+/* Flash Message Styling for Warnings */
+.alert-warning {
+    background-color: #fff3cd;
+    color: #856404;
+    border-radius: 5px;
+    padding: 12px;
+}
+
+.alert-dismissible .btn-close {
+    position: absolute;
+    top: 0;
+    right: 0;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .form-container {
+        padding: 20px;
+    }
+}
