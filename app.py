@@ -41,6 +41,32 @@ def create():
 
     return render_template('create.html')
 
+# Edit Post (User must be logged in)
+@app.route('/edit/<post_id>', methods=['GET', 'POST'])
+def edit_post(post_id):
+    if 'username' not in session:
+        flash("Please log in to edit a post.", "warning")
+        return redirect(url_for('login'))
+
+    post = posts_collection.find_one({"_id": ObjectId(post_id)})
+    if not post:
+        flash("Post not found.", "danger")
+        return redirect(url_for('index'))
+
+    if request.method == 'POST':
+        title = request.form['title']
+        content = request.form['content']
+
+        posts_collection.update_one(
+            {"_id": ObjectId(post_id)},
+            {"$set": {'title': title, 'content': content}}
+        )
+        flash("Post updated successfully!", "success")
+        return redirect(url_for('index'))
+    
+    post['_id'] = str(post['_id'])
+    return render_template('edit.html', post=post)
+
 # View Post
 @app.route('/view/<post_id>')
 def view_post(post_id):

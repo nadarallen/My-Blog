@@ -1,66 +1,88 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>My Blog</title>
+    <!-- Google Fonts: Outfit -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="{{ url_for('static', filename='style.css') }}" rel="stylesheet">
-
 </head>
+
 <body>
     <div class="container">
         <h1 class="text-center my-4">My Blog</h1>
 
         <!-- Flash Messages -->
         {% with messages = get_flashed_messages(with_categories=true) %}
-            {% if messages %}
-                {% for category, message in messages %}
-                    <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
-                        {{ message }}
-                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                    </div>
-                {% endfor %}
-            {% endif %}
+        {% if messages %}
+        {% for category, message in messages %}
+        <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+            {{ message }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+        {% endfor %}
+        {% endif %}
         {% endwith %}
 
         <!-- Navigation -->
-        <nav class="navbar navbar-expand-lg navbar-light bg-light mb-4">
-            <a class="navbar-brand" href="{{ url_for('index') }}">Home</a>
-            {% if 'username' in session %}
-                <a class="navbar-brand" href="{{ url_for('create') }}">Create Post</a>
-                <a class="navbar-brand" href="{{ url_for('logout') }}">Logout</a>
-                <span class="navbar-text ms-3">Logged in as: {{ session['username'] }}</span>
-            {% else %}
-                <a class="navbar-brand" href="{{ url_for('login') }}">Login</a>
-            {% endif %}
+        <nav class="navbar navbar-expand-lg">
+            <div class="container-fluid">
+                <a class="navbar-brand" href="{{ url_for('index') }}">MY BLOG</a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
+                    <div class="navbar-nav align-items-center">
+                        {% if 'username' in session %}
+                        <a class="nav-link" href="{{ url_for('create') }}">Create Post</a>
+                        <a class="nav-link" href="{{ url_for('logout') }}">Logout</a>
+                        <span class="navbar-text ms-3 d-none d-lg-block">Hello, {{ session['username'] }}</span>
+                        {% else %}
+                        <a class="nav-link" href="{{ url_for('login') }}">Login</a>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
         </nav>
 
         <!-- Posts Grid -->
         <div class="row">
             {% for post in posts %}
-                <div class="col-md-4 mb-4">
-                    <div class="card h-100">
-                        <div class="card-body d-flex flex-column">
-                            <h5 class="card-title">{{ post['title'] }}</h5>
-                            <p class="card-text">{{ post['content'][:100] }}...</p>
-                            <div class="mt-auto">
-                                <a href="{{ url_for('view_post', post_id=post['_id']) }}" class="btn btn-info btn-sm">View</a>
-                                {% if session.get('username') == 'admin' %}
-                                    <a href="{{ url_for('delete_post', post_id=post['_id']) }}" class="btn btn-danger btn-sm ms-2">Delete</a>
-                                {% endif %}
-                            </div>
+            <div class="col-md-4 mb-4">
+                <div class="card h-100">
+                    <div class="card-body d-flex flex-column">
+                        <h5 class="card-title">{{ post['title'] }}</h5>
+                        <p class="card-text">{{ post['content'][:100] }}...</p>
+                        <div class="mt-auto">
+                            <a href="{{ url_for('view_post', post_id=post['_id']) }}"
+                                class="btn btn-info btn-sm">View</a>
+                            {% if 'username' in session %}
+                            <a href="{{ url_for('edit_post', post_id=post['_id']) }}"
+                                class="btn btn-warning btn-sm ms-2">Edit</a>
+                            {% endif %}
+                            {% if session.get('username') == 'admin' %}
+                            <a href="{{ url_for('delete_post', post_id=post['_id']) }}"
+                                class="btn btn-danger btn-sm ms-2">Delete</a>
+                            {% endif %}
                         </div>
                     </div>
                 </div>
+            </div>
             {% endfor %}
         </div>
         {% if not posts %}
-            <p class="text-muted text-center">No posts yet. Be the first to create one!</p>
+        <p class="text-muted text-center">No posts yet. Be the first to create one!</p>
         {% endif %}
     </div>
 
     <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
+
 </html>
