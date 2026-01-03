@@ -1,5 +1,7 @@
 # My Blog (Doodle Edition)
 
+![UI Screenshot](static/ui_screenshot.png)
+
 A black-and-white, doodle-themed blog application built with Python (Flask) and MongoDB. This project features secure user authentication, image attachments, and a unique hand-drawn aesthetic.
 
 ## Tech Stack
