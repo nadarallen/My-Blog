@@ -1,64 +1,65 @@
-# My Blog
+# My Blog (Doodle Edition)
 
-This is a simple blog application built using Python with Flask, MongoDB, and basic frontend technologies. The blog allows users to create, read, update, and delete blog posts. It is designed with a clean, simple interface and utilizes a MongoDB database to store the blog content.
+A black-and-white, doodle-themed blog application built with Python (Flask) and MongoDB. This project features secure user authentication, image attachments, and a unique hand-drawn aesthetic.
 
 ## Tech Stack
 
-- **Backend**: Python with Flask web framework
-- **Database**: MongoDB accessed via PyMongo
-- **Frontend**: HTML templates rendered with Jinja2, styled with Bootstrap 5
-- **Dependencies**:
-  - `Flask` for the web framework
-  - `pymongo` for MongoDB interaction
+- **Backend**: Python, Flask
+- **Database**: MongoDB (via PyMongo)
+- **Security**: Werkzeug (Password Hashing)
+- **Frontend**: HTML5, CSS3 (Custom Doodle Theme), Bootstrap 5 (Grid)
+- **Fonts**: 'Patrick Hand' (Headers), 'Outfit' (Body)
 
 ## Features
 
-- **User Authentication**: Simple login/logout system (Hardcoded credentials).
+- **User Authentication**:
+  - Secure Registration & Login.
+  - Password hashing with `scrypt`.
 - **CRUD Operations**:
-  - **Create**: Logged-in users can create new posts.
-  - **Read**: View all posts on the homepage or detailed view of a single post.
-  - **Update**: Logged-in users can edit posts.
-  - **Delete**: Admin users can delete posts.
+  - **Create**: Authenticated users can write posts and attach images.
+  - **Read**: View all posts on the feed or individually.
+  - **Update**: Edit post content and update attached images.
+  - **Delete**: Admin-only feature.
+- **Photo Attachments**: Upload and display images with posts.
+- **Unique UI**: Custom "Black & White Doodle" theme with sketchy borders and generated background patterns.
 
 ## Prerequisites
 
 - **Python 3.x**
-- **MongoDB**: You need to have MongoDB installed and running locally on port `27017`.
+- **MongoDB**: Local instance running on port `27017`.
 
 ## Setup Instructions
 
 1. **Clone the repository**:
 
-   ```bash
-   git clone https://github.com/nadarallen/My-Blog.git
-   cd My-Blog
-   ```
+    ```bash
+    git clone https://github.com/nadarallen/My-Blog.git
+    cd My-Blog
+    ```
 
 2. **Install Dependencies**:
 
-   ```bash
-   pip install flask pymongo
-   ```
+    ```bash
+    pip install flask pymongo werkzeug
+    ```
 
-   *Note: You can also install from `requirements.txt` if available.*
+    *(Or use `pip install -r requirements.txt`)*
 
 3. **Start MongoDB**:
-   Ensure your local MongoDB instance is running.
+    Ensure your local MongoDB instance is running.
 
 4. **Run the Application**:
 
-   ```bash
-   python app.py
-   ```
+    ```bash
+    python app.py
+    ```
+
+    The application will automatically create the `static/uploads` directory if it doesn't exist.
 
 5. **Access the Blog**:
-   Open your browser and visit [http://127.0.0.1:5000/](http://127.0.0.1:5000/).
+    Open [http://127.0.0.1:5000/](http://127.0.0.1:5000/) in your browser.
 
-## Authentication
+## Default Credentials
 
-The application uses hardcoded credentials for demonstration purposes:
-
-| Role | Username | Password | Permissions |
-| :--- | :--- | :--- | :--- |
-| **Admin** | `admin` | `adminpass` | Create, Edit, Delete |
-| **User** | `user` | `userpass` | Create, Edit |
+Create your own account via the **Register** page!
+*(Legacy `admin`/`adminpass` login is still available for testing purposes)*.

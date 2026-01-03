@@ -1,237 +1,187 @@
-/* Modern Dark Aesthetic */
-@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&display=swap');
+/* Black & White Doodle Aesthetic */
+@import url('https://fonts.googleapis.com/css2?family=Patrick+Hand&family=Outfit:wght@300;400;600&display=swap');
 
 :root {
-    --bg-dark: #0f172a;
-    --bg-card: #1e293b;
-    --primary: #06b6d4; /* Cyan */
-    --secondary: #8b5cf6; /* Violet */
-    --text-main: #f8fafc;
-    --text-muted: #94a3b8;
-    --border-color: #334155;
-    --glass: rgba(30, 41, 59, 0.7);
+    --bg-color: #ffffff;
+    --text-color: #000000;
+    --border-color: #000000;
+    --accent-gray: #f0f0f0;
 }
 
 body {
-    background-color: var(--bg-dark);
+    background-color: var(--bg-color);
     font-family: 'Outfit', sans-serif;
-    color: var(--text-main);
+    color: var(--text-color);
     line-height: 1.6;
-    background-image: 
-        radial-gradient(circle at 10% 20%, rgba(6, 182, 212, 0.1) 0%, transparent 20%),
-        radial-gradient(circle at 90% 80%, rgba(139, 92, 246, 0.1) 0%, transparent 20%);
-    min-height: 100vh;
+    background-image: url('doodle_banner_1767457807754.png');
+    /* Pattern background */
+    background-size: 400px;
+    /* Adjust scale */
+}
+
+/* Container Wrapper */
+.container {
+    background-color: #ffffff;
+    border: 3px solid #000000;
+    border-radius: 2px;
+    padding: 2rem;
+    margin-top: 2rem;
+    margin-bottom: 2rem;
+    box-shadow: 10px 10px 0px #000000;
+    /* Hard block shadow */
 }
 
 /* Navbar */
 .navbar {
-    background-color: var(--glass) !important;
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
-    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-    margin-bottom: 3rem;
+    background-color: #ffffff !important;
+    border-bottom: 3px solid #000000;
     padding: 1rem 0;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.0);
+    /* Remove soft shadow */
 }
 
 .navbar-brand {
+    font-family: 'Patrick Hand', cursive;
     font-weight: 700;
-    font-size: 1.5rem;
-    background: linear-gradient(135deg, var(--primary), var(--secondary));
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    letter-spacing: -0.5px;
+    font-size: 2rem;
+    color: #000000 !important;
+    text-transform: uppercase;
 }
 
 .navbar .nav-link {
-    color: var(--text-muted) !important;
-    font-weight: 500;
-    transition: all 0.3s ease;
+    font-family: 'Patrick Hand', cursive;
+    color: #000000 !important;
+    font-size: 1.25rem;
+    text-decoration: underline;
+    text-decoration-color: transparent;
+    transition: all 0.2s ease;
 }
 
-.navbar .nav-link:hover, .navbar .nav-link.active {
-    color: var(--primary) !important;
-    transform: translateY(-2px);
-    text-shadow: 0 0 8px rgba(6, 182, 212, 0.3);
+.navbar .nav-link:hover {
+    text-decoration-color: #000000;
+    transform: rotate(-2deg);
 }
 
 .navbar-text {
-    color: var(--text-muted) !important;
+    color: #000000 !important;
+    font-family: 'Patrick Hand', cursive;
+    font-size: 1.2rem;
 }
 
-/* Typography */
-h1, h2, h3, h4, h5 {
-    color: var(--text-main);
-    font-weight: 700;
-    letter-spacing: -0.5px;
-}
-
-/* Cards */
+/* Cards (Posts) */
 .card {
-    background-color: var(--bg-card);
-    border: 1px solid var(--border-color);
-    border-radius: 16px;
-    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-    overflow: hidden;
+    background-color: #ffffff;
+    border: 3px solid #000000;
+    border-radius: 255px 15px 225px 15px / 15px 225px 15px 255px;
+    /* Sketchy border radius */
+    box-shadow: 5px 5px 0px #000000;
+    margin-bottom: 2rem;
+    transition: all 0.2s ease;
 }
 
 .card:hover {
-    transform: translateY(-8px);
-    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.2), 0 10px 10px -5px rgba(0, 0, 0, 0.1);
-    border-color: var(--primary);
-}
-
-.card-body {
-    padding: 2rem;
+    transform: translate(-3px, -3px);
+    box-shadow: 8px 8px 0px #000000;
 }
 
 .card-title {
-    color: var(--text-main);
+    font-family: 'Patrick Hand', cursive;
+    font-size: 1.75rem;
+    border-bottom: 2px dashed #000000;
+    padding-bottom: 0.5rem;
     margin-bottom: 1rem;
-    font-size: 1.5rem;
 }
 
-.card-text {
-    color: var(--text-muted);
-    font-size: 1.05rem;
-    margin-bottom: 1.5rem;
+.card-img-top {
+    border-bottom: 3px solid #000000;
+    object-fit: cover;
+    max-height: 250px;
+    border-radius: 255px 15px 0 0 / 15px 225px 0 0;
 }
 
-/* Forms */
-.form-control, .form-control:focus {
-    background-color: rgba(15, 23, 42, 0.5);
-    border: 1px solid var(--border-color);
-    color: var(--text-main);
-    border-radius: 10px;
-    padding: 12px 16px;
-    transition: all 0.3s ease;
-}
-
-.form-control:focus {
-    box-shadow: 0 0 0 3px rgba(6, 182, 212, 0.2);
-    border-color: var(--primary);
-}
-
-.form-label {
-    color: var(--text-muted);
-    font-weight: 500;
-    margin-bottom: 0.5rem;
-}
-
-.form-container {
-    background-color: var(--bg-card);
-    border: 1px solid var(--border-color);
-    padding: 2.5rem;
-    border-radius: 20px;
-    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+/* Headings */
+h1,
+h2,
+h3,
+h4,
+h5 {
+    font-family: 'Patrick Hand', cursive;
+    color: #000000;
 }
 
 /* Buttons */
 .btn {
-    padding: 10px 24px;
-    border-radius: 10px;
-    font-weight: 600;
-    letter-spacing: 0.5px;
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    border: none;
+    background-color: #ffffff;
+    color: #000000;
+    border: 3px solid #000000;
+    font-family: 'Patrick Hand', cursive;
+    font-size: 1.2rem;
+    border-radius: 255px 25px 225px 25px / 25px 225px 25px 255px;
+    transition: all 0.1s ease;
+    box-shadow: 3px 3px 0px #000000;
 }
 
+.btn:hover {
+    transform: translate(-2px, -2px);
+    box-shadow: 5px 5px 0px #000000;
+    background-color: #000000;
+    color: #ffffff;
+}
+
+/* Primary Actions */
 .btn-primary {
-    background: linear-gradient(135deg, var(--primary), #0891b2);
-    color: black;
-    box-shadow: 0 4px 6px -1px rgba(6, 182, 212, 0.2);
+    background-color: #000000;
+    color: #ffffff;
 }
 
 .btn-primary:hover {
-    background: linear-gradient(135deg, #0891b2, var(--primary));
-    transform: translateY(-2px);
-    box-shadow: 0 10px 15px -3px rgba(6, 182, 212, 0.3);
+    background-color: #ffffff;
+    color: #000000;
 }
 
-.btn-info {
-    background-color: rgba(6, 182, 212, 0.1);
-    color: var(--primary);
-    border: 1px solid rgba(6, 182, 212, 0.3);
+/* Forms */
+.form-control {
+    border: 3px solid #000000;
+    border-radius: 5px;
+    font-family: 'Outfit', sans-serif;
+    box-shadow: 3px 3px 0px #ddd;
 }
 
-.btn-info:hover {
-    background-color: rgba(6, 182, 212, 0.2);
-    color: #22d3ee;
-    border-color: var(--primary);
+.form-control:focus {
+    box-shadow: 5px 5px 0px #000000;
+    border-color: #000000;
 }
 
-.btn-warning {
-    background-color: rgba(139, 92, 246, 0.1);
-    color: var(--secondary);
-    border: 1px solid rgba(139, 92, 246, 0.3);
+.form-label {
+    font-family: 'Patrick Hand', cursive;
+    font-size: 1.3rem;
 }
 
-.btn-warning:hover {
-    background-color: rgba(139, 92, 246, 0.2);
-    color: #a78bfa;
-    border-color: var(--secondary);
-}
-
-.btn-danger {
-    background-color: rgba(239, 68, 68, 0.1);
-    color: #ef4444;
-    border: 1px solid rgba(239, 68, 68, 0.3);
-}
-
-.btn-danger:hover {
-    background-color: rgba(239, 68, 68, 0.2);
-    color: #f87171;
-    border-color: #ef4444;
-}
-
-.btn-secondary {
-    background-color: var(--bg-dark);
-    color: var(--text-muted);
-    border: 1px solid var(--border-color);
-}
-
-.btn-secondary:hover {
-    background-color: #1e293b;
-    color: var(--text-main);
-    border-color: var(--text-muted);
+.form-container {
+    background: #ffffff;
+    border: none;
+    box-shadow: none;
+    padding: 0;
 }
 
 /* Alerts */
 .alert {
-    border: none;
-    border-radius: 12px;
-    font-weight: 500;
-}
-
-.alert-success {
-    background-color: rgba(16, 185, 129, 0.1);
-    color: #10b981;
-    border: 1px solid rgba(16, 185, 129, 0.2);
-}
-
-.alert-info {
-    background-color: rgba(6, 182, 212, 0.1);
-    color: var(--primary);
-    border: 1px solid rgba(6, 182, 212, 0.2);
-}
-
-.alert-warning {
-    background-color: rgba(245, 158, 11, 0.1);
-    color: #f59e0b;
-    border: 1px solid rgba(245, 158, 11, 0.2);
-}
-
-.alert-danger {
-    background-color: rgba(239, 68, 68, 0.1);
-    color: #ef4444;
-    border: 1px solid rgba(239, 68, 68, 0.2);
+    border: 3px solid #000000;
+    background-color: #ffffff;
+    color: #000000;
+    border-radius: 10px;
+    font-family: 'Patrick Hand', cursive;
+    box-shadow: 4px 4px 0px #000000;
 }
 
 /* Utilities */
-.text-muted {
-    color: var(--text-muted) !important;
+a {
+    color: #000000;
+    text-decoration: underline;
 }
 
-a {
-    text-decoration: none;
+a:hover {
+    color: #000000;
+    background-color: yellow;
+    /* Highlighter effect */
 }
