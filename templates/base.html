@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}My Blog{% endblock %}</title>
+    <!-- Google Fonts: Outfit & Caveat for premium hand-drawn look -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@700&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Bootstrap CSS for layout grid only (custom styled) -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Main Custom CSS -->
+    <link href="{{ url_for('static', filename='style.css') }}" rel="stylesheet">
+    {% block extra_head %}{% endblock %}
+</head>
+<body>
+    <!-- Top Doodle Banner Header -->
+    <header class="doodle-header">
+        <div class="container d-flex flex-column flex-md-row align-items-center justify-content-between py-3">
+            <a class="site-logo" href="{{ url_for('posts.index') }}">My-Blog<span>.</span></a>
+            
+            <!-- Global Search Form -->
+            <form action="{{ url_for('posts.index') }}" method="GET" class="search-form my-2 my-md-0">
+                <input type="text" name="q" placeholder="Search stories..." value="{{ search or '' }}" aria-label="Search" class="search-input">
+                <button type="submit" class="search-btn">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+                </button>
+            </form>
+
+            <nav class="doodle-nav d-flex align-items-center">
+                <a href="{{ url_for('posts.index') }}" class="nav-link-custom">Home</a>
+                {% if 'username' in session %}
+                    <a href="{{ url_for('posts.create') }}" class="nav-link-custom btn-doodle-sm ms-2">Write Post</a>
+                    <span class="user-greeting ms-3 d-none d-lg-inline">Hey, <strong>{{ session['username'] }}</strong></span>
+                    <form method="POST" action="{{ url_for('auth.logout') }}" class="d-inline ms-2">
+                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                        <button type="submit" class="btn-doodle-logout">Logout</button>
+                    </form>
+                {% else %}
+                    <a href="{{ url_for('auth.login') }}" class="nav-link-custom ms-3">Login</a>
+                    <a href="{{ url_for('auth.register') }}" class="btn-doodle-sm ms-3">Register</a>
+                {% endif %}
+            </nav>
+        </div>
+    </header>
+
+    <!-- Main Container -->
+    <main class="container py-4 my-2">
+        <!-- Flash Messages -->
+        {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+        <div class="flash-messages">
+            {% for category, message in messages %}
+            <div class="alert-doodle alert-doodle-{{ category }} alert-dismissible fade show" role="alert">
+                <span class="alert-icon">
+                    {% if category == 'success' %}✨
+                    {% elif category == 'danger' %}🚨
+                    {% elif category == 'warning' %}⚠️
+                    {% else %}💡{% endif %}
+                </span>
+                <span class="alert-text">{{ message }}</span>
+                <button type="button" class="btn-doodle-close" data-bs-dismiss="alert" aria-label="Close">×</button>
+            </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+        {% endwith %}
+
+        <!-- Inherited Content -->
+        {% block content %}{% endblock %}
+    </main>
+
+    <!-- Footer -->
+    <footer class="doodle-footer py-4 mt-5">
+        <div class="container text-center">
+            <p class="mb-1">© 2026 My-Blog. Crafted with premium security and AWS-native DynamoDB & S3.</p>
+            <p class="small text-muted">Designed for professional portfolio showcasing.</p>
+        </div>
+    </footer>
+
+    <!-- Bootstrap Bundle JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    {% block extra_scripts %}{% endblock %}
+</body>
+</html>
