@@ -1,0 +1,33 @@
+# Git
+.git
+.gitignore
+
+# Environment files — NEVER bake secrets into the image
+.env
+.env.*
+!.env.production.example
+
+# Python cache
+__pycache__
+*.pyc
+*.pyo
+*.pyd
+.Python
+
+# Virtual environments
+venv/
+env/
+.venv/
+
+# User-uploaded files (not part of the image)
+static/uploads/
+
+# Dev / editor artifacts
+.vscode/
+.idea/
+*.swp
+*.swo
+*.DS_Store
+
+# Deployment docs (not needed in image)
+deploy/
