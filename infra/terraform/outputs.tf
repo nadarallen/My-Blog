@@ -1,11 +1,11 @@
-output "alb_dns_name" {
-  description = "Public URL of the Application Load Balancer"
-  value       = aws_lb.main.dns_name
+output "ec2_public_ip" {
+  description = "Public IP address of the EC2 Instance"
+  value       = aws_instance.app.public_ip
 }
 
-output "ecr_repository_url" {
-  description = "URL of the Amazon ECR container repository"
-  value       = aws_ecr_repository.app.repository_url
+output "elastic_ip" {
+  description = "Public Elastic IP assigned to the application"
+  value       = aws_eip.app.public_ip
 }
 
 output "s3_media_bucket" {
@@ -13,17 +13,12 @@ output "s3_media_bucket" {
   value       = aws_s3_bucket.media.id
 }
 
-output "ecs_cluster_name" {
-  description = "Name of the ECS Cluster"
-  value       = aws_ecs_cluster.main.name
+output "ssm_secret_key_parameter" {
+  description = "AWS SSM Parameter Store key name for SECRET_KEY"
+  value       = aws_ssm_parameter.flask_secret_key.name
 }
 
-output "ecs_service_name" {
-  description = "Name of the ECS Service"
-  value       = aws_ecs_service.main.name
-}
-
-output "cloudwatch_log_group" {
-  description = "CloudWatch Log Group name"
-  value       = aws_cloudwatch_log_group.ecs.name
+output "ec2_instance_id" {
+  description = "AWS EC2 Instance ID"
+  value       = aws_instance.app.id
 }

@@ -68,11 +68,13 @@ This document details the production readiness verification, security posture, s
 
 ## 5. Deployment & AWS Configuration
 
-- **Compute**: AWS EC2 / ECS with IAM Instance Role (no hardcoded credentials).
-- **Storage**: Amazon DynamoDB (On-Demand billing mode) + Amazon S3 (Private bucket).
+- **Compute**: AWS EC2 (`t2.micro` / `t3.micro`) with IAM Instance Role (credential-free `boto3` calls).
+- **Container Stack**: Docker + Nginx reverse proxy + Gunicorn WSGI server (`workers=2`, `timeout=60`).
+- **Storage**: Amazon DynamoDB (9 tables on `PAY_PER_REQUEST` / 25 WCU/RCU Free Tier) + Amazon S3 (Private bucket with presigned URLs).
+- **Secrets**: AWS SSM Parameter Store (`/myblog/production/SECRET_KEY`), 100% free for standard parameters.
 - **Environment Variables**:
   ```env
-  SECRET_KEY=<strong-random-secret-key-min-32-chars>
+  SECRET_KEY=<fetched-from-ssm-parameter-store>
   AWS_REGION=ap-south-1
   S3_BUCKET=myblog-images-prod
   DYNAMODB_POSTS_TABLE=myblog-posts
@@ -87,3 +89,18 @@ This document details the production readiness verification, security posture, s
   ADMIN_USERNAME=admin
   FLASK_ENV=production
   ```
+
+---
+
+## 6. AWS Free Tier Constraints & Upgrade Path
+
+### Free Tier Safeguards
+- **Zero Paid Add-ons**: Excluded NAT Gateway (~$32/mo), ALB (~$18/mo), RDS (~$15/mo), Secrets Manager (~$0.40/mo).
+- **Monthly Cost**: **$0.00** during 12-month AWS Free Tier allowance.
+
+### Operational Limitations
+- Single EC2 instance (restarts require ~1–2 mins auto-recovery via systemd/Docker).
+- Direct Nginx proxying without AWS Application Load Balancer.
+
+### Architectural Upgrade Path
+Refer to [`docs/SCALING_AND_MIGRATION.md`](file:///d:/my%20study/Project/My-Blog/docs/SCALING_AND_MIGRATION.md) for step-by-step instructions to migrate from **Single EC2 -> Multi-EC2 -> ECS Fargate -> ALB + CloudFront** with **zero application code changes**.

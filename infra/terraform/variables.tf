@@ -16,6 +16,12 @@ variable "app_name" {
   default     = "myblog"
 }
 
+variable "instance_type" {
+  description = "Free-Tier eligible EC2 instance type (t2.micro / t3.micro)"
+  type        = string
+  default     = "t2.micro"
+}
+
 variable "admin_username" {
   description = "Admin username for the blog"
   type        = string
@@ -26,24 +32,6 @@ variable "container_port" {
   description = "Port exposed by the Flask/Gunicorn container"
   type        = number
   default     = 5000
-}
-
-variable "fargate_cpu" {
-  description = "Fargate task CPU units (256, 512, 1024, etc.)"
-  type        = number
-  default     = 256
-}
-
-variable "fargate_memory" {
-  description = "Fargate task Memory in MB (512, 1024, 2048, etc.)"
-  type        = number
-  default     = 512
-}
-
-variable "app_count" {
-  description = "Number of ECS tasks to run in parallel"
-  type        = number
-  default     = 2
 }
 
 variable "domain_name" {

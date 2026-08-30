@@ -1,8 +1,16 @@
-# Security Group for Application Load Balancer
-resource "aws_security_group" "alb" {
-  name        = "${var.app_name}-alb-sg-${var.environment}"
-  description = "Controls public inbound access to the ALB"
-  vpc_id      = aws_vpc.main.id
+# ─────────────────────────────────────────────────────────────────────────────
+# Security Group for Free-Tier EC2 Instance
+# ─────────────────────────────────────────────────────────────────────────────
+
+# Default VPC lookup for single EC2 deployment
+data "aws_vpc" "default" {
+  default = true
+}
+
+resource "aws_security_group" "ec2" {
+  name        = "${var.app_name}-ec2-sg-${var.environment}"
+  description = "Controls public HTTP/HTTPS access to EC2 instance. SSH is managed via SSM Session Manager."
+  vpc_id      = data.aws_vpc.default.id
 
   ingress {
     description = "HTTP Public Access"
@@ -21,6 +29,7 @@ resource "aws_security_group" "alb" {
   }
 
   egress {
+    description = "Outbound Internet Traffic"
     from_port   = 0
     to_port     = 0
     protocol    = "-1"
@@ -28,32 +37,7 @@ resource "aws_security_group" "alb" {
   }
 
   tags = {
-    Name = "${var.app_name}-alb-sg"
-  }
-}
-
-# Security Group for ECS Tasks (Isolated in Private Subnets)
-resource "aws_security_group" "ecs_tasks" {
-  name        = "${var.app_name}-ecs-tasks-sg-${var.environment}"
-  description = "Allows inbound traffic exclusively from the ALB"
-  vpc_id      = aws_vpc.main.id
-
-  ingress {
-    description     = "Inbound from ALB target group"
-    from_port       = var.container_port
-    to_port         = var.container_port
-    protocol        = "tcp"
-    security_groups = [aws_security_group.alb.id]
-  }
-
-  egress {
-    from_port   = 0
-    to_port     = 0
-    protocol    = "-1"
-    cidr_blocks = ["0.0.0.0/0"]
-  }
-
-  tags = {
-    Name = "${var.app_name}-ecs-tasks-sg"
+    Name        = "${var.app_name}-ec2-sg"
+    Environment = var.environment
   }
 }
