@@ -150,3 +150,22 @@ def is_valid_password(password: str) -> bool:
       - At least one digit
     """
     return bool(_PASSWORD_RE.match(password))
+
+
+# ──────────────────────────────────────────────────────────────────
+# Security Tokens & Mentions
+# ──────────────────────────────────────────────────────────────────
+
+import secrets
+
+
+def generate_secure_token(bytes_len: int = 32) -> str:
+    """Generate a cryptographically secure random URL-safe token."""
+    return secrets.token_urlsafe(bytes_len)
+
+
+def parse_mentions(text: str) -> set[str]:
+    """Extract valid @username mentions from post or comment text."""
+    mentions = set(re.findall(r"@([a-z0-9_]{3,32})\b", text.lower()))
+    return mentions
+

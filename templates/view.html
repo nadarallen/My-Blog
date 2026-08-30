@@ -1,59 +1,157 @@
 {% extends "base.html" %}
 
-{% block title %}{{ post['title'] }} — My Blog{% endblock %}
+{% block title %}{{ post.title }} — My-Blog{% endblock %}
+
+{% block extra_head %}
+<!-- Structured Data JSON-LD for SEO -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "{{ post.title }}",
+  "author": {
+    "@type": "Person",
+    "name": "{{ post.author }}"
+  },
+  "datePublished": "{{ post.created_at }}",
+  "dateModified": "{{ post.updated_at or post.created_at }}"
+}
+</script>
+{% endblock %}
 
 {% block content %}
-    <article class="post-detail-container">
-        <!-- Post Header -->
-        <header class="post-detail-header text-center mb-4">
-            <h1 class="post-detail-title">{{ post['title'] }}</h1>
-            
-            <div class="post-detail-meta d-flex justify-content-center align-items-center text-muted gap-3 mt-3">
-                <span class="meta-item">
-                    By <strong>{{ post['author'] }}</strong>
-                </span>
-                <span class="meta-divider">•</span>
-                <span class="meta-item d-flex align-items-center">
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="me-1"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
-                    {{ post['read_time'] }} min read
-                </span>
-                <span class="meta-divider">•</span>
-                <span class="meta-item d-flex align-items-center">
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="me-1"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
-                    {{ post['views'] }} views
-                </span>
-            </div>
-        </header>
+<div class="row justify-content-center">
+    <div class="col-lg-9">
+        <article class="card-doodle p-4 mb-4">
+            <!-- Post Header -->
+            <header class="post-header mb-4">
+                <div class="d-flex align-items-center justify-content-between mb-2">
+                    <span class="badge bg-secondary rounded-pill px-3 py-1">{{ post.category_slug | title }}</span>
+                    <span class="text-muted small">⏱️ {{ post.read_time }} min read · 👁️ {{ post.views }} views</span>
+                </div>
+                
+                <h1 class="post-title my-2">{{ post.title }}</h1>
+                {% if post.subtitle %}
+                    <p class="lead text-muted">{{ post.subtitle }}</p>
+                {% endif %}
 
-        <!-- Post Image -->
-        {% if post['image_url'] %}
-            <div class="post-detail-img-wrapper mb-5 text-center">
-                <img src="{{ post['image_url'] }}" class="post-detail-img img-fluid" alt="{{ post['title'] }}">
-            </div>
-        {% endif %}
+                <div class="d-flex align-items-center justify-content-between border-bottom pb-3 mt-3">
+                    <div class="author-info d-flex align-items-center">
+                        <div class="avatar-circle me-2">{{ post.author[:2].upper() }}</div>
+                        <div>
+                            <a href="{{ url_for('auth.author_profile', username=post.author) }}" class="text-dark font-weight-bold text-decoration-none">
+                                {{ post.author }}
+                            </a>
+                            <div class="text-muted small">{{ post.created_at[:10] }}</div>
+                        </div>
+                    </div>
 
-        <!-- Post Body -->
-        <div class="post-detail-body markdown-content mb-5">
-            {{ post['content_html'] | safe }}
-        </div>
+                    <!-- Social Interactions -->
+                    <div class="post-actions d-flex align-items-center">
+                        {% if 'username' in session %}
+                            <form method="POST" action="{{ url_for('social.toggle_like', post_id=post.post_id) }}" class="d-inline me-2">
+                                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                                <button type="submit" class="btn btn-sm {% if has_liked %}btn-danger{% else %}btn-outline-danger{% endif %}">
+                                    ❤️ {{ post.likes_count }}
+                                </button>
+                            </form>
 
-        <hr class="doodle-divider">
+                            <form method="POST" action="{{ url_for('social.toggle_bookmark', post_id=post.post_id) }}" class="d-inline me-2">
+                                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                                <button type="submit" class="btn btn-sm {% if has_bookmarked %}btn-warning{% else %}btn-outline-warning{% endif %}">
+                                    🔖 Saved
+                                </button>
+                            </form>
+                        {% endif %}
 
-        <!-- Post Actions Footer -->
-        <div class="post-detail-footer d-flex flex-column flex-sm-row justify-content-between align-items-center py-3 gap-3">
-            <a href="{{ url_for('posts.index') }}" class="btn-doodle-outline">← Back to Stories</a>
-            
-            <!-- Author / Admin Actions -->
-            {% if 'username' in session and (session['username'] == post['author'] or session['username'] == admin_username) %}
-                <div class="d-flex align-items-center gap-2">
-                    <a href="{{ url_for('posts.edit_post', post_id=post['post_id']) }}" class="btn-doodle-warning">Edit Story</a>
-                    
-                    <form method="POST" action="{{ url_for('posts.delete_post', post_id=post['post_id']) }}" onsubmit="return confirm('Are you sure you want to delete this story?');" class="d-inline">
-                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-                        <button type="submit" class="btn-doodle-danger">Delete Story</button>
-                    </form>
+                        {% if session.get('username') == post.author or session.get('role') in ('admin', 'moderator') %}
+                            <a href="{{ url_for('posts.edit_post', post_id=post.post_id) }}" class="btn btn-sm btn-outline-secondary me-2">✏️ Edit</a>
+                        {% endif %}
+                    </div>
+                </div>
+            </header>
+
+            <!-- Cover Image -->
+            {% if post.image_url %}
+                <div class="post-cover-container mb-4">
+                    <img src="{{ post.image_url }}" class="img-fluid rounded border-doodle" alt="{{ post.title }}">
                 </div>
             {% endif %}
-        </div>
-    </article>
+
+            <!-- Markdown Content -->
+            <div class="post-body my-4">
+                {{ post.content_html | safe }}
+            </div>
+
+            <!-- Tags -->
+            {% if post.tags %}
+                <div class="post-tags border-top pt-3 mt-4">
+                    <strong>Tags:</strong>
+                    {% for tag in post.tags %}
+                        <a href="{{ url_for('taxonomy.tag_view', slug=tag) }}" class="badge bg-light text-dark border me-1">#{{ tag }}</a>
+                    {% endfor %}
+                </div>
+            {% endif %}
+        </article>
+
+        <!-- Comments Section -->
+        <section class="card-doodle p-4 mb-4" id="comments">
+            <h3 class="mb-4">💬 Discussion ({{ comments | length }})</h3>
+
+            {% if 'username' in session %}
+                <form method="POST" action="{{ url_for('comments.add_comment', post_id=post.post_id) }}" class="mb-4">
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                    <div class="mb-2">
+                        <textarea name="content" class="form-control form-control-doodle" rows="3" placeholder="Join the discussion... (@mention users)" required></textarea>
+                    </div>
+                    <button type="submit" class="btn-doodle-primary btn-sm">Post Comment</button>
+                </form>
+            {% else %}
+                <div class="alert alert-info">
+                    <a href="{{ url_for('auth.login') }}">Log in</a> to join the conversation.
+                </div>
+            {% endif %}
+
+            <!-- Comments List -->
+            <div class="comments-list">
+                {% for comment in comments %}
+                    <div class="comment-card border-bottom py-3 ms-{{ comment.depth * 3 }}" id="comment-{{ comment.comment_id }}">
+                        <div class="d-flex justify-content-between align-items-center mb-1">
+                            <div>
+                                <strong>{{ comment.author }}</strong>
+                                <span class="text-muted small ms-2">{{ comment.created_at[:16].replace('T', ' ') }}</span>
+                            </div>
+                            {% if session.get('username') == comment.author or session.get('role') in ('admin', 'moderator') %}
+                                <form method="POST" action="{{ url_for('comments.delete_comment', comment_id=comment.comment_id) }}" class="d-inline">
+                                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                                    <button type="submit" class="btn btn-sm text-danger border-0">Delete</button>
+                                </form>
+                            {% endif %}
+                        </div>
+                        <p class="mb-1">{{ comment.content }}</p>
+                    </div>
+                {% else %}
+                    <p class="text-muted">No comments yet. Be the first to share your thoughts!</p>
+                {% endfor %}
+            </div>
+        </section>
+
+        <!-- Related Posts -->
+        {% if related_posts %}
+            <section class="card-doodle p-4">
+                <h4 class="mb-3">📚 Related Stories</h4>
+                <div class="row">
+                    {% for rel in related_posts %}
+                        <div class="col-md-4 mb-3">
+                            <div class="border rounded p-3 h-100">
+                                <h6><a href="{{ url_for('posts.view_post', post_id=rel.post_id) }}" class="text-dark text-decoration-none">{{ rel.title }}</a></h6>
+                                <p class="small text-muted mb-0">{{ rel.author }} · {{ rel.created_at[:10] }}</p>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            </section>
+        {% endif %}
+    </div>
+</div>
 {% endblock %}

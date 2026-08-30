@@ -1,7 +1,7 @@
 """Health check and API utilities."""
 import time
 
-from flask import Blueprint, current_app, jsonify
+from flask import Blueprint, current_app, jsonify, render_template, request
 
 api_bp = Blueprint("api", __name__)
 
@@ -44,3 +44,42 @@ def health():
 
     status_code = 200 if result["status"] == "ok" else 503
     return jsonify(result), status_code
+
+
+# ──────────────────────────────────────────────────────────────────
+# REST API v1 Endpoints & OpenAPI Documentation
+# ──────────────────────────────────────────────────────────────────
+
+@api_bp.route("/v1/posts", methods=["GET"])
+def api_list_posts():
+    page = request.args.get("page", 1, type=int)
+    search = request.args.get("search", "")
+    category = request.args.get("category", "")
+    posts, total = current_app.post_model.get_all_paginated(
+        page=page, per_page=10, search=search, category=category, status="published"
+    )
+    for p in posts:
+        p.pop("content_lower", None)
+        p.pop("title_lower", None)
+    return jsonify({
+        "status": "success",
+        "page": page,
+        "total": total,
+        "results": posts,
+    })
+
+
+@api_bp.route("/v1/posts/<post_id>", methods=["GET"])
+def api_get_post(post_id):
+    post = current_app.post_model.get_by_id_no_increment(post_id)
+    if not post or post.get("status") != "published":
+        return jsonify({"status": "error", "message": "Post not found"}), 404
+    post.pop("content_lower", None)
+    post.pop("title_lower", None)
+    return jsonify({"status": "success", "data": post})
+
+
+@api_bp.route("/v1/docs")
+def api_docs():
+    return render_template("api_docs.html")
+

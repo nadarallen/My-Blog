@@ -1,0 +1,298 @@
+{
+  "nodes": [
+    {
+      "id": "readme_owasp_security_matrix",
+      "label": "OWASP Top 10 Security Matrix",
+      "file_type": "concept",
+      "source_file": "D:\\my study\\Project\\My-Blog\\README.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "Mitigations for OWASP A01-A10 including POST-only deletions, Argon2id, bleach sanitization, and CSRF protection."
+    },
+    {
+      "id": "readme_cloud_native_aws_architecture",
+      "label": "Cloud-Native AWS Architecture",
+      "file_type": "rationale",
+      "source_file": "D:\\my study\\Project\\My-Blog\\README.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "readme_doodle_glassmorphism_ui",
+      "label": "Doodle-Glassmorphism UI Aesthetic",
+      "file_type": "concept",
+      "source_file": "D:\\my study\\Project\\My-Blog\\README.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "readme_sdlc_lifecycle",
+      "label": "Software Development Life Cycle Strategy",
+      "file_type": "concept",
+      "source_file": "D:\\my study\\Project\\My-Blog\\README.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "deploy_deploy_aws_deployment_guide",
+      "label": "AWS Deployment Guide",
+      "file_type": "document",
+      "source_file": "D:\\my study\\Project\\My-Blog\\deploy\\DEPLOY.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "deploy_deploy_s3_presigned_url_strategy",
+      "label": "S3 Private Bucket Presigned URL Strategy",
+      "file_type": "rationale",
+      "source_file": "D:\\my study\\Project\\My-Blog\\deploy\\DEPLOY.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "deploy_deploy_dynamodb_schema_setup",
+      "label": "DynamoDB Table Setup Guide",
+      "file_type": "document",
+      "source_file": "D:\\my study\\Project\\My-Blog\\deploy\\DEPLOY.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "deploy_local_testing_moto_offline_testing",
+      "label": "Moto Offline AWS Testing Strategy",
+      "file_type": "concept",
+      "source_file": "D:\\my study\\Project\\My-Blog\\deploy\\LOCAL_TESTING.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "deploy_pre_deployment_checklist_verification_suite",
+      "label": "Pre-Deployment Verification Suite",
+      "file_type": "document",
+      "source_file": "D:\\my study\\Project\\My-Blog\\deploy\\PRE_DEPLOYMENT_CHECKLIST.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docker_compose_prod_nginx_reverse_proxy",
+      "label": "Nginx Reverse Proxy Container",
+      "file_type": "concept",
+      "source_file": "D:\\my study\\Project\\My-Blog\\docker-compose.prod.yml",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docker_compose_prod_gunicorn_flask_container",
+      "label": "Gunicorn WSGI Application Container",
+      "file_type": "concept",
+      "source_file": "D:\\my study\\Project\\My-Blog\\docker-compose.prod.yml",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "requirements_boto3_aws_sdk",
+      "label": "Boto3 AWS SDK Dependency",
+      "file_type": "concept",
+      "source_file": "D:\\my study\\Project\\My-Blog\\requirements.txt",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "requirements_argon2_cffi",
+      "label": "Argon2 Password Hashing Dependency",
+      "file_type": "concept",
+      "source_file": "D:\\my study\\Project\\My-Blog\\requirements.txt",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "templates_base_doodle_layout_template",
+      "label": "Base Doodle Layout Template",
+      "file_type": "document",
+      "source_file": "D:\\my study\\Project\\My-Blog\\templates\\base.html",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "templates_create_markdown_live_preview_editor",
+      "label": "Markdown Live Preview Editor",
+      "file_type": "document",
+      "source_file": "D:\\my study\\Project\\My-Blog\\templates\\create.html",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "ui_doodle_glassmorphism_interface",
+      "label": "UI Glassmorphism Showcase Screenshot",
+      "file_type": "image",
+      "source_file": "D:\\my study\\Project\\My-Blog\\UI.png",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "static_ui_screenshot_blog_interface_preview",
+      "label": "Blog Interface Preview Image",
+      "file_type": "image",
+      "source_file": "D:\\my study\\Project\\My-Blog\\static\\ui_screenshot.png",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    }
+  ],
+  "edges": [
+    {
+      "source": "readme_cloud_native_aws_architecture",
+      "target": "deploy_deploy_aws_deployment_guide",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "D:\\my study\\Project\\My-Blog\\README.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "readme_cloud_native_aws_architecture",
+      "target": "deploy_deploy_s3_presigned_url_strategy",
+      "relation": "conceptually_related_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.95,
+      "source_file": "D:\\my study\\Project\\My-Blog\\README.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "readme_owasp_security_matrix",
+      "target": "requirements_argon2_cffi",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "D:\\my study\\Project\\My-Blog\\README.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "readme_doodle_glassmorphism_ui",
+      "target": "templates_base_doodle_layout_template",
+      "relation": "conceptually_related_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.95,
+      "source_file": "D:\\my study\\Project\\My-Blog\\README.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "ui_doodle_glassmorphism_interface",
+      "target": "readme_doodle_glassmorphism_ui",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "D:\\my study\\Project\\My-Blog\\UI.png",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docker_compose_prod_nginx_reverse_proxy",
+      "target": "docker_compose_prod_gunicorn_flask_container",
+      "relation": "conceptually_related_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.95,
+      "source_file": "D:\\my study\\Project\\My-Blog\\docker-compose.prod.yml",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "deploy_local_testing_moto_offline_testing",
+      "target": "deploy_pre_deployment_checklist_verification_suite",
+      "relation": "conceptually_related_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.85,
+      "source_file": "D:\\my study\\Project\\My-Blog\\deploy\\LOCAL_TESTING.md",
+      "source_location": null,
+      "weight": 1.0
+    }
+  ],
+  "hyperedges": [
+    {
+      "id": "aws_infrastructure_layer",
+      "label": "AWS Infrastructure & Deployment Layer",
+      "nodes": [
+        "readme_cloud_native_aws_architecture",
+        "deploy_deploy_aws_deployment_guide",
+        "deploy_deploy_s3_presigned_url_strategy",
+        "deploy_deploy_dynamodb_schema_setup",
+        "requirements_boto3_aws_sdk"
+      ],
+      "relation": "participate_in",
+      "confidence": "INFERRED",
+      "confidence_score": 0.85,
+      "source_file": "D:\\my study\\Project\\My-Blog\\README.md"
+    },
+    {
+      "id": "doodle_ui_theme_system",
+      "label": "Doodle Glassmorphism UI & Template System",
+      "nodes": [
+        "readme_doodle_glassmorphism_ui",
+        "templates_base_doodle_layout_template",
+        "templates_create_markdown_live_preview_editor",
+        "ui_doodle_glassmorphism_interface",
+        "static_ui_screenshot_blog_interface_preview"
+      ],
+      "relation": "participate_in",
+      "confidence": "INFERRED",
+      "confidence_score": 0.85,
+      "source_file": "D:\\my study\\Project\\My-Blog\\README.md"
+    }
+  ],
+  "input_tokens": 1250,
+  "output_tokens": 450
+}

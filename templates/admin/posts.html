@@ -1,0 +1,59 @@
+{% extends "base.html" %}
+
+{% block title %}Manage Content — Admin — My-Blog{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-lg-3 mb-4">
+        <div class="card-doodle p-3">
+            <h5 class="mb-3">🛡️ Admin Console</h5>
+            <div class="list-group list-group-flush">
+                <a href="{{ url_for('admin.dashboard') }}" class="list-group-item list-group-item-action">Overview</a>
+                <a href="{{ url_for('admin.manage_users') }}" class="list-group-item list-group-item-action">Users & Roles</a>
+                <a href="{{ url_for('admin.manage_posts') }}" class="list-group-item list-group-item-action active fw-bold">Content Moderation</a>
+                <a href="{{ url_for('admin.manage_reports') }}" class="list-group-item list-group-item-action">Reports Queue</a>
+                <a href="{{ url_for('admin.manage_settings') }}" class="list-group-item list-group-item-action">Site Settings</a>
+                <a href="{{ url_for('admin.audit_logs') }}" class="list-group-item list-group-item-action">Security Audit Logs</a>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-9">
+        <div class="card-doodle p-4">
+            <h2 class="mb-4">📚 Content Moderation ({{ total }} Stories)</h2>
+            <div class="table-responsive">
+                <table class="table align-middle">
+                    <thead>
+                        <tr>
+                            <th>Title</th>
+                            <th>Author</th>
+                            <th>Status</th>
+                            <th>Views</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for post in posts %}
+                            <tr>
+                                <td>
+                                    <a href="{{ url_for('posts.view_post', post_id=post.post_id) }}" class="text-dark font-weight-bold text-decoration-none">{{ post.title }}</a>
+                                </td>
+                                <td>{{ post.author }}</td>
+                                <td><span class="badge bg-secondary">{{ post.status | title }}</span></td>
+                                <td>{{ post.views }}</td>
+                                <td>
+                                    <a href="{{ url_for('posts.edit_post', post_id=post.post_id) }}" class="btn btn-sm btn-outline-secondary me-1">Edit</a>
+                                    <form method="POST" action="{{ url_for('posts.delete_post', post_id=post.post_id) }}" class="d-inline">
+                                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                                        <button type="submit" class="btn btn-sm btn-outline-danger" onclick="return confirm('Delete this story?')">Delete</button>
+                                    </form>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

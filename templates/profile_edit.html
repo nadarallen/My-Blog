@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+
+{% block title %}Edit Profile — My-Blog{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-lg-8">
+        <div class="card-doodle p-4">
+            <h2 class="mb-4">⚙️ Edit Profile</h2>
+
+            <form method="POST" action="{{ url_for('auth.edit_profile') }}">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+
+                <div class="mb-3">
+                    <label for="display_name" class="form-label font-weight-bold">Display Name</label>
+                    <input type="text" class="form-control form-control-doodle" id="display_name" name="display_name" value="{{ user.display_name or '' }}" required>
+                </div>
+
+                <div class="mb-3">
+                    <label for="bio" class="form-label font-weight-bold">Bio</label>
+                    <textarea class="form-control form-control-doodle" id="bio" name="bio" rows="3" placeholder="Tell readers about yourself...">{{ user.bio or '' }}</textarea>
+                </div>
+
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <label for="location" class="form-label font-weight-bold">Location</label>
+                        <input type="text" class="form-control form-control-doodle" id="location" name="location" value="{{ user.location or '' }}">
+                    </div>
+                    <div class="col-md-6">
+                        <label for="website" class="form-label font-weight-bold">Website</label>
+                        <input type="url" class="form-control form-control-doodle" id="website" name="website" placeholder="https://example.com" value="{{ user.website or '' }}">
+                    </div>
+                </div>
+
+                <div class="mb-3">
+                    <label for="avatar_url" class="form-label font-weight-bold">Avatar Image URL</label>
+                    <input type="url" class="form-control form-control-doodle" id="avatar_url" name="avatar_url" placeholder="https://..." value="{{ user.avatar_url or '' }}">
+                </div>
+
+                <div class="mb-4">
+                    <label for="cover_url" class="form-label font-weight-bold">Cover Banner Image URL</label>
+                    <input type="url" class="form-control form-control-doodle" id="cover_url" name="cover_url" placeholder="https://..." value="{{ user.cover_url or '' }}">
+                </div>
+
+                <div class="d-flex justify-content-between">
+                    <a href="{{ url_for('auth.author_profile', username=user.username) }}" class="btn-doodle-secondary">Cancel</a>
+                    <button type="submit" class="btn-doodle-primary">Save Changes</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

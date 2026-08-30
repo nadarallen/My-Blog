@@ -1,61 +1,87 @@
 {% extends "base.html" %}
 
-{% block title %}Write Post — My Blog{% endblock %}
-
-{% block extra_head %}
-<!-- Markdown-it library for rendering live preview in browser -->
-<script src="https://cdn.jsdelivr.net/npm/markdown-it/dist/markdown-it.min.js"></script>
-{% endblock %}
+{% block title %}Create New Story — My-Blog{% endblock %}
 
 {% block content %}
 <div class="row justify-content-center">
-    <div class="col-lg-8">
-        <div class="form-card-container">
-            <h2 class="form-title text-center mb-4">Craft a New Story</h2>
-            
-            <form method="POST" enctype="multipart/form-data" class="doodle-form">
+    <div class="col-lg-10">
+        <div class="card-doodle p-4">
+            <h2 class="mb-4">✏️ Write a New Story</h2>
+
+            <form method="POST" action="{{ url_for('posts.create') }}" enctype="multipart/form-data" id="editorForm">
                 <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-                
-                <!-- Title Field -->
-                <div class="form-group mb-4">
-                    <label for="title" class="form-label-custom">Title</label>
-                    <input type="text" id="title" name="title" required maxlength="200" placeholder="Give your story a title..." value="{{ title or '' }}" class="form-input-custom">
-                    <div class="form-text text-muted small">Max 200 characters. Plain text only.</div>
+
+                <div class="mb-3">
+                    <label for="title" class="form-label font-weight-bold">Story Title</label>
+                    <input type="text" class="form-control form-control-doodle" id="title" name="title" placeholder="Enter a catchy title..." required maxlength="200" value="{{ title or '' }}">
                 </div>
 
-                <!-- Cover Image Field -->
-                <div class="form-group mb-4">
-                    <label for="image" class="form-label-custom">Cover Image</label>
-                    <input type="file" id="image" name="image" accept="image/*" class="form-input-file">
-                    <div class="form-text text-muted small">PNG, JPG, GIF, WebP up to 5MB. Verified by server-side magic bytes.</div>
+                <div class="mb-3">
+                    <label for="subtitle" class="form-label font-weight-bold">Subtitle / Excerpt</label>
+                    <input type="text" class="form-control form-control-doodle" id="subtitle" name="subtitle" placeholder="Short description or summary..." maxlength="300">
                 </div>
 
-                <!-- Markdown Content Field -->
-                <div class="form-group mb-4">
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <label for="category_slug" class="form-label font-weight-bold">Category</label>
+                        <select class="form-select form-control-doodle" id="category_slug" name="category_slug">
+                            {% for cat in categories %}
+                                <option value="{{ cat.slug }}">{{ cat.name }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="col-md-6">
+                        <label for="tags" class="form-label font-weight-bold">Tags (comma-separated)</label>
+                        <input type="text" class="form-control form-control-doodle" id="tags" name="tags" placeholder="python, aws, security">
+                    </div>
+                </div>
+
+                <div class="mb-3">
+                    <label for="image" class="form-label font-weight-bold">Cover Image (Optional)</label>
+                    <input type="file" class="form-control form-control-doodle" id="image" name="image" accept="image/png, image/jpeg, image/gif, image/webp">
+                </div>
+
+                <div class="mb-3">
                     <div class="d-flex justify-content-between align-items-center mb-2">
-                        <label for="content" class="form-label-custom mb-0">Story Body (Markdown supported)</label>
-                        <div class="editor-tabs">
-                            <button type="button" id="tab-write" class="tab-btn active">Write</button>
-                            <button type="button" id="tab-preview" class="tab-btn">Preview</button>
-                        </div>
+                        <label for="content" class="form-label font-weight-bold mb-0">Story Content (Markdown)</label>
+                        <button type="button" class="btn btn-sm btn-outline-secondary" id="togglePreviewBtn">👁️ Live Preview</button>
                     </div>
-                    
-                    <div id="editor-write-pane">
-                        <textarea id="content" name="content" required placeholder="Tell your story using Markdown... Use # for headings, **bold** for emphasis, etc." class="form-textarea-custom">{{ content or '' }}</textarea>
-                        <div class="form-text text-muted small">Supports safe Markdown rendering (links, lists, headers, code).</div>
+
+                    <div id="editorPane">
+                        <textarea class="form-control form-control-doodle" id="content" name="content" rows="12" placeholder="Write your story using Markdown..." required>{{ content or '' }}</textarea>
                     </div>
-                    
-                    <div id="editor-preview-pane" class="d-none">
-                        <div id="markdown-preview" class="markdown-content-preview">
-                            <span class="text-muted italic">Nothing to preview yet...</span>
-                        </div>
+
+                    <div id="previewPane" class="doodle-preview-box p-3 border rounded mt-2 d-none">
+                        <div id="previewContent"><em>Nothing to preview...</em></div>
                     </div>
                 </div>
 
-                <!-- Buttons -->
-                <div class="form-actions d-flex gap-3">
-                    <button type="submit" class="btn-doodle w-100">Publish Story ✨</button>
-                    <a href="{{ url_for('posts.index') }}" class="btn-doodle-outline w-100 text-center">Cancel</a>
+                <div class="row mb-4">
+                    <div class="col-md-4">
+                        <label for="status" class="form-label font-weight-bold">Status</label>
+                        <select class="form-select form-control-doodle" id="status" name="status">
+                            <option value="published" selected>Publish Immediately</option>
+                            <option value="draft">Save as Draft</option>
+                            <option value="scheduled">Schedule Publication</option>
+                        </select>
+                    </div>
+                    <div class="col-md-4">
+                        <label for="visibility" class="form-label font-weight-bold">Visibility</label>
+                        <select class="form-select form-control-doodle" id="visibility" name="visibility">
+                            <option value="public" selected>Public</option>
+                            <option value="unlisted">Unlisted</option>
+                            <option value="private">Private</option>
+                        </select>
+                    </div>
+                    <div class="col-md-4">
+                        <label for="scheduled_at" class="form-label font-weight-bold">Schedule Date/Time</label>
+                        <input type="datetime-local" class="form-control form-control-doodle" id="scheduled_at" name="scheduled_at">
+                    </div>
+                </div>
+
+                <div class="d-flex justify-content-between align-items-center">
+                    <a href="{{ url_for('posts.index') }}" class="btn-doodle-secondary">Cancel</a>
+                    <button type="submit" class="btn-doodle-primary">Publish Story ✨</button>
                 </div>
             </form>
         </div>
@@ -65,40 +91,32 @@
 
 {% block extra_scripts %}
 <script>
-    document.addEventListener("DOMContentLoaded", function() {
-        const md = window.markdownit({
-            html: false, // Disallow raw HTML in preview for safety
-            linkify: true,
-            breaks: true
-        });
+    const contentArea = document.getElementById('content');
+    const toggleBtn = document.getElementById('togglePreviewBtn');
+    const previewPane = document.getElementById('previewPane');
+    const previewContent = document.getElementById('previewContent');
 
-        const tabWrite = document.getElementById("tab-write");
-        const tabPreview = document.getElementById("tab-preview");
-        const paneWrite = document.getElementById("editor-write-pane");
-        const panePreview = document.getElementById("editor-preview-pane");
-        const textarea = document.getElementById("content");
-        const previewDiv = document.getElementById("markdown-preview");
+    toggleBtn.addEventListener('click', () => {
+        if (previewPane.classList.contains('d-none')) {
+            // Render Live Preview
+            const formData = new FormData();
+            formData.append('content', contentArea.value);
+            formData.append('csrf_token', '{{ csrf_token() }}');
 
-        tabWrite.addEventListener("click", function() {
-            tabWrite.classList.add("active");
-            tabPreview.classList.remove("active");
-            paneWrite.classList.remove("d-none");
-            panePreview.classList.add("d-none");
-        });
-
-        tabPreview.addEventListener("click", function() {
-            tabPreview.classList.add("active");
-            tabWrite.classList.remove("active");
-            panePreview.classList.remove("d-none");
-            paneWrite.classList.add("d-none");
-
-            const text = textarea.value.trim();
-            if (text) {
-                previewDiv.innerHTML = md.render(text);
-            } else {
-                previewDiv.innerHTML = '<span class="text-muted italic">Nothing to preview yet...</span>';
-            }
-        });
+            fetch('{{ url_for("posts.preview_markdown") }}', {
+                method: 'POST',
+                body: formData
+            })
+            .then(res => res.json())
+            .then(data => {
+                previewContent.innerHTML = data.html || '<em>Empty content...</em>';
+                previewPane.classList.remove('d-none');
+                toggleBtn.textContent = '✏️ Edit Mode';
+            });
+        } else {
+            previewPane.classList.add('d-none');
+            toggleBtn.textContent = '👁️ Live Preview';
+        }
     });
 </script>
 {% endblock %}

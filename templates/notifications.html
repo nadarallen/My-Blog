@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+
+{% block title %}Notifications — My-Blog{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-lg-8">
+        <div class="card-doodle p-4">
+            <h2 class="mb-4">🔔 Notifications Center</h2>
+            {% for n in notifications %}
+                <div class="border-bottom py-3 d-flex align-items-center justify-content-between">
+                    <div>
+                        <span>
+                            {% if n.type == 'like' %}❤️
+                            {% elif n.type == 'comment' %}💬
+                            {% elif n.type == 'follow' %}👤
+                            {% elif n.type == 'mention' %}📣
+                            {% else %}💡{% endif %}
+                        </span>
+                        <span class="ms-2">{{ n.message }}</span>
+                        <div class="text-muted small ms-4">{{ n.created_at[:16].replace('T', ' ') }}</div>
+                    </div>
+                    {% if n.type in ('like', 'comment', 'mention') %}
+                        <a href="{{ url_for('posts.view_post', post_id=n.target_id) }}" class="btn btn-sm btn-outline-secondary">View</a>
+                    {% elif n.type == 'follow' %}
+                        <a href="{{ url_for('auth.author_profile', username=n.actor) }}" class="btn btn-sm btn-outline-secondary">Profile</a>
+                    {% endif %}
+                </div>
+            {% else %}
+                <p class="text-muted">You have no notifications yet.</p>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+{% endblock %}

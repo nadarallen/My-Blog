@@ -117,8 +117,21 @@ def login():
             session.permanent = True  # Honour PERMANENT_SESSION_LIFETIME
             session["username"] = username
 
+            # Store role and session version in session
+            user_obj = current_app.user_model.get_by_username(username)
+            if user_obj:
+                admin_username = current_app.config.get("ADMIN_USERNAME", "admin")
+                if username.lower() == admin_username.lower():
+                    session["role"] = "admin"
+                else:
+                    session["role"] = user_obj.get("role", "user")
+                session["session_version"] = int(user_obj.get("session_version", 1))
+            else:
+                session["role"] = "user"
+                session["session_version"] = 1
+
             current_app.logger.info(
-                "Login success: '%s' from %s", username, request.remote_addr
+                "Login success: '%s' (role: %s, ver: %s) from %s", username, session["role"], session["session_version"], request.remote_addr
             )
             flash(f"Welcome back, {username}! 👋", "success")
 
@@ -147,12 +160,122 @@ def login():
 def logout():
     """
     Sign out the current user.
-
-    POST-only + CSRF token required.
-    A simple GET to /logout from a malicious link cannot log the user out.
     """
     username = session.get("username", "anonymous")
     session.clear()  # Destroy entire session, not just username key
     current_app.logger.info("Logout: '%s' from %s", username, request.remote_addr)
     flash("You've been signed out.", "info")
     return redirect(url_for("posts.index"))
+
+
+# ──────────────────────────────────────────────────────────────────
+# Author Profile Page & Settings
+# ──────────────────────────────────────────────────────────────────
+
+@auth_bp.route("/author/<username>")
+def author_profile(username):
+    user_obj = current_app.user_model.get_by_username(username)
+    if not user_obj:
+        flash("Author profile not found.", "warning")
+        return redirect(url_for("posts.index"))
+
+    posts, total = current_app.post_model.get_all_paginated(
+        page=1, per_page=20, author=username, status="published"
+    )
+    followers = current_app.interaction_model.get_followers(username)
+    following = current_app.interaction_model.get_following(username)
+
+    is_curr_following = False
+    if "username" in session:
+        is_curr_following = current_app.interaction_model.is_following(session["username"], username)
+
+    return render_template(
+        "profile.html",
+        profile_user=user_obj,
+        posts=posts,
+        total_posts=total,
+        followers_count=len(followers),
+        following_count=len(following),
+        is_following=is_curr_following,
+    )
+
+
+@auth_bp.route("/profile/edit", methods=["GET", "POST"])
+def edit_profile():
+    if "username" not in session:
+        flash("Please log in to edit your profile.", "warning")
+        return redirect(url_for("auth.login"))
+
+    username = session["username"]
+    user_obj = current_app.user_model.get_by_username(username)
+
+    if request.method == "POST":
+        display_name = request.form.get("display_name", "").strip()
+        bio = request.form.get("bio", "").strip()
+        website = request.form.get("website", "").strip()
+        location = request.form.get("location", "").strip()
+        avatar_url = request.form.get("avatar_url", "").strip()
+        cover_url = request.form.get("cover_url", "").strip()
+
+        update_data = {
+            "display_name": display_name,
+            "bio": bio,
+            "website": website,
+            "location": location,
+            "avatar_url": avatar_url,
+            "cover_url": cover_url,
+        }
+        current_app.user_model.update_profile(username, update_data)
+        flash("Profile updated successfully!", "success")
+        return redirect(url_for("auth.author_profile", username=username))
+
+    return render_template("profile_edit.html", user=user_obj)
+
+
+# ──────────────────────────────────────────────────────────────────
+# Password Change & Account Deletion
+# ──────────────────────────────────────────────────────────────────
+
+@auth_bp.route("/account/password", methods=["POST"])
+def change_password():
+    if "username" not in session:
+        flash("Please log in first.", "warning")
+        return redirect(url_for("auth.login"))
+
+    username = session["username"]
+    old_password = request.form.get("old_password", "")
+    new_password = request.form.get("new_password", "")
+
+    if not current_app.user_model.verify(username, old_password):
+        flash("Current password was incorrect.", "danger")
+        return redirect(url_for("auth.edit_profile"))
+
+    if not is_valid_password(new_password):
+        flash("New password must be 8–72 chars with at least one letter and one number.", "danger")
+        return redirect(url_for("auth.edit_profile"))
+
+    current_app.user_model.change_password(username, new_password)
+    session.clear()
+    flash("Password updated successfully. Please log in again.", "success")
+    return redirect(url_for("auth.login"))
+
+
+@auth_bp.route("/account/delete", methods=["POST"])
+def delete_account():
+    if "username" not in session:
+        flash("Please log in first.", "warning")
+        return redirect(url_for("auth.login"))
+
+    username = session["username"]
+    current_app.user_model.delete_account(username)
+    current_app.audit_model.log_action(
+        actor=username,
+        action="ACCOUNT_DELETED",
+        target=username,
+        ip_address=request.remote_addr or "",
+    )
+    session.clear()
+    flash("Your account has been deleted.", "info")
+    return redirect(url_for("posts.index"))
+
+

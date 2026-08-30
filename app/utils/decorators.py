@@ -66,3 +66,44 @@ def author_required(f):
         return f(*args, **kwargs)
 
     return decorated
+
+
+def role_required(*allowed_roles):
+    """
+    Restrict route access to specified RBAC roles.
+    Checks session['role'] and verifies user status.
+    """
+    def decorator(f):
+        @wraps(f)
+        def decorated(*args, **kwargs):
+            if "username" not in session:
+                flash("Please log in to continue.", "warning")
+                from flask import request
+                return redirect(url_for("auth.login", next=request.path))
+
+            user_role = session.get("role", "user")
+            current_user = session.get("username", "")
+            admin = current_app.config.get("ADMIN_USERNAME", "admin")
+
+            # Admin bypass
+            if current_user.lower() == admin.lower():
+                return f(*args, **kwargs)
+
+            if user_role not in allowed_roles:
+                flash("Access denied. Insufficient permissions.", "danger")
+                return redirect(url_for("posts.index"))
+
+            return f(*args, **kwargs)
+        return decorated
+    return decorator
+
+
+def admin_required(f):
+    """Shortcut decorator for admin-only routes."""
+    return role_required("admin")(f)
+
+
+def moderator_required(f):
+    """Shortcut decorator for moderator & admin routes."""
+    return role_required("moderator", "admin")(f)
+

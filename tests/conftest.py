@@ -19,6 +19,13 @@ os.environ["AWS_REGION"] = "ap-south-1"
 os.environ["S3_BUCKET"] = "test-myblog-images"
 os.environ["DYNAMODB_POSTS_TABLE"] = "myblog-posts-test"
 os.environ["DYNAMODB_USERS_TABLE"] = "myblog-users-test"
+os.environ["DYNAMODB_COMMENTS_TABLE"] = "myblog-comments-test"
+os.environ["DYNAMODB_INTERACTIONS_TABLE"] = "myblog-interactions-test"
+os.environ["DYNAMODB_NOTIFICATIONS_TABLE"] = "myblog-notifications-test"
+os.environ["DYNAMODB_AUDIT_TABLE"] = "myblog-audit-test"
+os.environ["DYNAMODB_TAXONOMY_TABLE"] = "myblog-taxonomy-test"
+os.environ["DYNAMODB_SETTINGS_TABLE"] = "myblog-settings-test"
+os.environ["DYNAMODB_REPORTS_TABLE"] = "myblog-reports-test"
 os.environ["ADMIN_USERNAME"] = "testadmin"
 os.environ["FLASK_ENV"] = "development"
 # Fake credentials so boto3 doesn't try real AWS
@@ -33,24 +40,32 @@ def _create_aws_resources():
     """Create DynamoDB tables and S3 bucket inside moto mock."""
     ddb = boto3.resource("dynamodb", region_name="ap-south-1")
 
-    ddb.create_table(
-        TableName="myblog-posts-test",
-        KeySchema=[{"AttributeName": "post_id", "KeyType": "HASH"}],
-        AttributeDefinitions=[{"AttributeName": "post_id", "AttributeType": "S"}],
-        BillingMode="PAY_PER_REQUEST",
-    )
-    ddb.create_table(
-        TableName="myblog-users-test",
-        KeySchema=[{"AttributeName": "username", "KeyType": "HASH"}],
-        AttributeDefinitions=[{"AttributeName": "username", "AttributeType": "S"}],
-        BillingMode="PAY_PER_REQUEST",
-    )
+    tables = [
+        ("myblog-posts-test", "post_id"),
+        ("myblog-users-test", "username"),
+        ("myblog-comments-test", "comment_id"),
+        ("myblog-interactions-test", "interaction_id"),
+        ("myblog-notifications-test", "notification_id"),
+        ("myblog-audit-test", "log_id"),
+        ("myblog-taxonomy-test", "item_id"),
+        ("myblog-settings-test", "key"),
+        ("myblog-reports-test", "report_id"),
+    ]
+
+    for table_name, pk in tables:
+        ddb.create_table(
+            TableName=table_name,
+            KeySchema=[{"AttributeName": pk, "KeyType": "HASH"}],
+            AttributeDefinitions=[{"AttributeName": pk, "AttributeType": "S"}],
+            BillingMode="PAY_PER_REQUEST",
+        )
 
     s3 = boto3.client("s3", region_name="ap-south-1")
     s3.create_bucket(
         Bucket="test-myblog-images",
         CreateBucketConfiguration={"LocationConstraint": "ap-south-1"},
     )
+
 
 
 # ─────────────────────────────────────────────────────────────────

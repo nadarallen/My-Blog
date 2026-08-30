@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+
+{% block title %}My Feed — My-Blog{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-lg-9">
+        <h2 class="mb-4">📰 Personalized Following Feed</h2>
+        {% if following_count == 0 %}
+            <div class="alert alert-info">
+                You are not following any authors yet. Visit <a href="{{ url_for('search.search') }}">Explore</a> to find authors to follow!
+            </div>
+        {% else %}
+            <div class="row">
+                {% for post in posts %}
+                    <div class="col-md-6 mb-4">
+                        <div class="card-doodle p-3 h-100 d-flex flex-column justify-content-between">
+                            <div>
+                                <h5><a href="{{ url_for('posts.view_post', post_id=post.post_id) }}" class="text-dark text-decoration-none">{{ post.title }}</a></h5>
+                                <p class="text-muted small">{{ post.excerpt or post.content[:100] }}...</p>
+                            </div>
+                            <div class="d-flex justify-content-between text-muted small border-top pt-2">
+                                <span>✍️ {{ post.author }}</span>
+                                <span>⏱️ {{ post.read_time }} min</span>
+                            </div>
+                        </div>
+                    </div>
+                {% else %}
+                    <p class="text-muted">No new stories from authors you follow.</p>
+                {% endfor %}
+            </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

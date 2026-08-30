@@ -1,0 +1,80 @@
+{% extends "base.html" %}
+
+{% block title %}Admin Dashboard — My-Blog{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-lg-3 mb-4">
+        <div class="card-doodle p-3">
+            <h5 class="mb-3">🛡️ Admin Console</h5>
+            <div class="list-group list-group-flush">
+                <a href="{{ url_for('admin.dashboard') }}" class="list-group-item list-group-item-action active fw-bold">Overview</a>
+                <a href="{{ url_for('admin.manage_users') }}" class="list-group-item list-group-item-action">Users & Roles</a>
+                <a href="{{ url_for('admin.manage_posts') }}" class="list-group-item list-group-item-action">Content Moderation</a>
+                <a href="{{ url_for('admin.manage_reports') }}" class="list-group-item list-group-item-action">Reports Queue</a>
+                <a href="{{ url_for('admin.manage_settings') }}" class="list-group-item list-group-item-action">Site Settings</a>
+                <a href="{{ url_for('admin.audit_logs') }}" class="list-group-item list-group-item-action">Security Audit Logs</a>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-9">
+        <h2 class="mb-4">System Overview</h2>
+
+        <div class="row mb-4">
+            <div class="col-md-3 mb-3">
+                <div class="card-doodle p-3 text-center">
+                    <h3 class="text-primary mb-1">{{ total_users }}</h3>
+                    <div class="text-muted small">Total Users</div>
+                </div>
+            </div>
+            <div class="col-md-3 mb-3">
+                <div class="card-doodle p-3 text-center">
+                    <h3 class="text-success mb-1">{{ total_posts }}</h3>
+                    <div class="text-muted small">Total Stories</div>
+                </div>
+            </div>
+            <div class="col-md-3 mb-3">
+                <div class="card-doodle p-3 text-center">
+                    <h3 class="text-warning mb-1">{{ pending_reports }}</h3>
+                    <div class="text-muted small">Pending Reports</div>
+                </div>
+            </div>
+            <div class="col-md-3 mb-3">
+                <div class="card-doodle p-3 text-center">
+                    <h3 class="text-info mb-1">{{ total_views }}</h3>
+                    <div class="text-muted small">Platform Views</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card-doodle p-4">
+            <h4 class="mb-3">📋 Recent Security & Admin Activity</h4>
+            <div class="table-responsive">
+                <table class="table align-middle mb-0">
+                    <thead>
+                        <tr>
+                            <th>Actor</th>
+                            <th>Action</th>
+                            <th>Target</th>
+                            <th>Timestamp</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for log in recent_logs %}
+                            <tr>
+                                <td><strong>{{ log.actor }}</strong></td>
+                                <td><span class="badge bg-secondary">{{ log.action }}</span></td>
+                                <td>{{ log.target }}</td>
+                                <td>{{ log.created_at[:16].replace('T', ' ') }}</td>
+                            </tr>
+                        {% else %}
+                            <tr><td colspan="4" class="text-muted text-center">No recent security logs.</td></tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

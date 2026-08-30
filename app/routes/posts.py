@@ -11,6 +11,7 @@ Security measures applied:
   - S3 images served via presigned URLs (private bucket — no direct access)
   - Title length capped at 200 chars
 """
+from flask import jsonify
 import markdown2
 from flask import (
     Blueprint,
@@ -110,126 +111,175 @@ def index():
 
 @posts_bp.route("/post/<post_id>")
 def view_post(post_id: str):
-    post = current_app.post_model.get_by_id(post_id)
+    viewed = session.get("viewed_posts", [])
+    if post_id in viewed:
+        post = current_app.post_model.get_by_id_no_increment(post_id)
+    else:
+        post = current_app.post_model.get_by_id(post_id)
+        if post:
+            viewed.append(post_id)
+            session["viewed_posts"] = viewed[-50:]  # Keep last 50 viewed posts
+
     if not post:
         abort(404)
 
     post["image_url"] = get_presigned_url(post.get("image_key")) if post.get("image_key") else None
     post["content_html"] = _render_markdown(post.get("content", ""))
 
-    return render_template("view.html", post=post)
+
+    # Fetch comments
+    comments = current_app.comment_model.get_by_post(post_id, sort_by="newest")
+
+    # Fetch interaction states if logged in
+    has_liked = False
+    has_bookmarked = False
+    if "username" in session:
+        has_liked = current_app.interaction_model.has_liked(session["username"], post_id)
+        has_bookmarked = current_app.interaction_model.has_bookmarked(session["username"], post_id)
+
+    # Fetch related posts by category
+    related_posts = []
+    if post.get("category_slug"):
+        rel, _ = current_app.post_model.get_all_paginated(
+            page=1, per_page=4, category=post["category_slug"], status="published"
+        )
+        related_posts = [p for p in rel if p["post_id"] != post_id][:3]
+
+    return render_template(
+        "view.html",
+        post=post,
+        comments=comments,
+        has_liked=has_liked,
+        has_bookmarked=has_bookmarked,
+        related_posts=related_posts,
+    )
 
 
-# ──────────────────────────────────────────────────────────────────
-# Create post
-# ──────────────────────────────────────────────────────────────────
+@posts_bp.route("/preview", methods=["POST"])
+def preview_markdown():
+    content = request.form.get("content", "")
+    rendered = _render_markdown(content)
+    return jsonify({"html": rendered})
+
+
+@posts_bp.route("/drafts")
+@login_required
+def user_drafts():
+    username = session["username"]
+    drafts = current_app.post_model.get_user_drafts(username)
+    return render_template("drafts.html", drafts=drafts)
+
 
 @posts_bp.route("/create", methods=["GET", "POST"])
 @login_required
 def create():
+    categories = current_app.taxonomy_model.list_categories()
     if request.method == "POST":
-        # Sanitize title (strip all HTML tags)
         title = sanitize_text(request.form.get("title", ""))
-        # Keep content as Markdown — sanitization happens at render time
+        subtitle = sanitize_text(request.form.get("subtitle", ""))
         content = request.form.get("content", "").strip()
+        category_slug = request.form.get("category_slug", "general").strip()
+        tags_raw = request.form.get("tags", "").split(",")
+        status = request.form.get("status", "published").strip()
+        visibility = request.form.get("visibility", "public").strip()
+        scheduled_at = request.form.get("scheduled_at", "").strip()
+        seo_title = sanitize_text(request.form.get("seo_title", ""))
+        seo_description = sanitize_text(request.form.get("seo_description", ""))
 
-        # ── Field validation ─────────────────────────────────────
         if not title:
             flash("Title is required.", "danger")
-            return render_template("create.html", title=title, content=content), 400
+            return render_template("create.html", title=title, content=content, categories=categories), 400
         if len(title) > 200:
             flash("Title must be 200 characters or less.", "danger")
-            return render_template("create.html", title=title, content=content), 400
+            return render_template("create.html", title=title, content=content, categories=categories), 400
         if not content:
             flash("Content is required.", "danger")
-            return render_template("create.html", title=title, content=content), 400
-        if len(content) > 50_000:
-            flash("Content is too long (max 50,000 characters).", "danger")
-            return render_template("create.html", title=title, content=content), 400
+            return render_template("create.html", title=title, content=content, categories=categories), 400
 
-        # ── Image upload ─────────────────────────────────────────
         image_key, upload_error = _handle_image_upload()
         if upload_error:
             flash(upload_error, "danger")
-            return render_template("create.html", title=title, content=content), 400
+            return render_template("create.html", title=title, content=content, categories=categories), 400
 
-        # ── Persist ──────────────────────────────────────────────
+        # Save tag entries
+        for t in tags_raw:
+            if t.strip():
+                current_app.taxonomy_model.create_tag(t.strip())
+
         post_id = current_app.post_model.create(
             title=title,
+            subtitle=subtitle,
             content=content,
             author=session["username"],
             image_key=image_key,
+            category_slug=category_slug,
+            tags=tags_raw,
+            status=status,
+            visibility=visibility,
+            scheduled_at=scheduled_at,
+            seo_title=seo_title,
+            seo_description=seo_description,
         )
-        current_app.logger.info(
-            "Post created [id=%s] by '%s'", post_id, session["username"]
-        )
-        flash("Post published! ✨", "success")
+        current_app.logger.info("Post created [id=%s] by '%s'", post_id, session["username"])
+        flash("Post saved successfully! ✨" if status == "draft" else "Post published! ✨", "success")
         return redirect(url_for("posts.view_post", post_id=post_id))
 
-    return render_template("create.html")
+    return render_template("create.html", categories=categories)
 
-
-# ──────────────────────────────────────────────────────────────────
-# Edit post — author or admin only
-# ──────────────────────────────────────────────────────────────────
 
 @posts_bp.route("/edit/<post_id>", methods=["GET", "POST"])
-@author_required  # Checks login + ownership; injects `post` kwarg
+@author_required
 def edit_post(post_id: str, post: dict):
+    categories = current_app.taxonomy_model.list_categories()
     if request.method == "POST":
         title = sanitize_text(request.form.get("title", ""))
+        subtitle = sanitize_text(request.form.get("subtitle", ""))
         content = request.form.get("content", "").strip()
+        category_slug = request.form.get("category_slug", "general").strip()
+        tags_raw = request.form.get("tags", "").split(",")
+        status = request.form.get("status", "published").strip()
+        visibility = request.form.get("visibility", "public").strip()
 
         if not title or not content:
             flash("Title and content are required.", "danger")
-            return render_template("edit.html", post=post), 400
-        if len(title) > 200:
-            flash("Title must be 200 characters or less.", "danger")
-            return render_template("edit.html", post=post), 400
+            return render_template("edit.html", post=post, categories=categories), 400
 
-        # ── Optional image replacement ────────────────────────────
-        image_key = post.get("image_key")  # Keep existing by default
+        image_key = post.get("image_key")
         new_key, upload_error = _handle_image_upload()
         if upload_error:
             flash(upload_error, "danger")
-            return render_template("edit.html", post=post), 400
+            return render_template("edit.html", post=post, categories=categories), 400
         if new_key:
-            # Delete old image from S3 before replacing
             if image_key:
                 delete_image(image_key)
             image_key = new_key
 
-        current_app.post_model.update(post_id, title, content, image_key)
-        current_app.logger.info(
-            "Post updated [id=%s] by '%s'", post_id, session["username"]
+        current_app.post_model.update(
+            post_id=post_id,
+            title=title,
+            subtitle=subtitle,
+            content=content,
+            image_key=image_key,
+            category_slug=category_slug,
+            tags=tags_raw,
+            status=status,
+            visibility=visibility,
         )
         flash("Post updated successfully.", "success")
         return redirect(url_for("posts.view_post", post_id=post_id))
 
-    # GET — render edit form with current post data
     post["image_url"] = get_presigned_url(post.get("image_key")) if post.get("image_key") else None
-    return render_template("edit.html", post=post)
+    return render_template("edit.html", post=post, categories=categories)
 
-
-# ──────────────────────────────────────────────────────────────────
-# Delete post — POST only + CSRF token + author/admin check
-# ──────────────────────────────────────────────────────────────────
 
 @posts_bp.route("/delete/<post_id>", methods=["POST"])
-@author_required  # Checks login + ownership
+@author_required
 def delete_post(post_id: str, post: dict):
-    """
-    Delete a post. POST-only to prevent CSRF via image-tag GET requests.
-    The CSRF token in the form is validated by Flask-WTF automatically.
-    """
-    # Delete associated S3 image first (if any)
     image_key = post.get("image_key")
     if image_key:
         delete_image(image_key)
 
     current_app.post_model.delete(post_id)
-    current_app.logger.info(
-        "Post deleted [id=%s] by '%s'", post_id, session["username"]
-    )
     flash("Post deleted.", "info")
     return redirect(url_for("posts.index"))
+

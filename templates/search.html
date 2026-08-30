@@ -1,0 +1,63 @@
+{% extends "base.html" %}
+
+{% block title %}Search Stories — My-Blog{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-lg-3 mb-4">
+        <div class="card-doodle p-3">
+            <h5 class="mb-3">🔍 Search & Filter</h5>
+            <form action="{{ url_for('search.search') }}" method="GET">
+                <div class="mb-3">
+                    <label class="form-label font-weight-bold">Keyword</label>
+                    <input type="text" name="q" class="form-control form-control-doodle" value="{{ query }}" placeholder="Search title or content...">
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label font-weight-bold">Category</label>
+                    <select name="category" class="form-select form-control-doodle">
+                        <option value="">All Categories</option>
+                        {% for cat in categories %}
+                            <option value="{{ cat.slug }}" {% if category == cat.slug %}selected{% endif %}>{{ cat.name }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label font-weight-bold">Tag</label>
+                    <input type="text" name="tag" class="form-control form-control-doodle" value="{{ tag }}" placeholder="e.g. security">
+                </div>
+
+                <button type="submit" class="btn-doodle-primary w-100">Apply Filters</button>
+            </form>
+        </div>
+    </div>
+
+    <div class="col-lg-9">
+        <h3 class="mb-3">Search Results ({{ total_results }})</h3>
+        {% if query %}
+            <p class="text-muted">Showing results for <strong>"{{ query }}"</strong></p>
+        {% endif %}
+
+        <div class="row">
+            {% for post in posts %}
+                <div class="col-md-6 mb-4">
+                    <div class="card-doodle p-3 h-100 d-flex flex-column justify-content-between">
+                        <div>
+                            <span class="badge bg-secondary mb-2">{{ post.category_slug | title }}</span>
+                            <h5><a href="{{ url_for('posts.view_post', post_id=post.post_id) }}" class="text-dark text-decoration-none">{{ post.title }}</a></h5>
+                            <p class="text-muted small">{{ post.excerpt or post.content[:100] }}...</p>
+                        </div>
+                        <div class="d-flex justify-content-between text-muted small border-top pt-2">
+                            <span>✍️ {{ post.author }}</span>
+                            <span>⏱️ {{ post.read_time }} min</span>
+                        </div>
+                    </div>
+                </div>
+            {% else %}
+                <p class="text-muted">No stories found matching your criteria.</p>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -28,10 +28,18 @@ class BaseConfig:
     S3_PRESIGNED_EXPIRY: int = 3600  # 1 hour presigned URL lifetime
     DYNAMODB_POSTS_TABLE: str = os.environ.get("DYNAMODB_POSTS_TABLE", "myblog-posts")
     DYNAMODB_USERS_TABLE: str = os.environ.get("DYNAMODB_USERS_TABLE", "myblog-users")
+    DYNAMODB_COMMENTS_TABLE: str = os.environ.get("DYNAMODB_COMMENTS_TABLE", "myblog-comments")
+    DYNAMODB_INTERACTIONS_TABLE: str = os.environ.get("DYNAMODB_INTERACTIONS_TABLE", "myblog-interactions")
+    DYNAMODB_NOTIFICATIONS_TABLE: str = os.environ.get("DYNAMODB_NOTIFICATIONS_TABLE", "myblog-notifications")
+    DYNAMODB_AUDIT_TABLE: str = os.environ.get("DYNAMODB_AUDIT_TABLE", "myblog-audit")
+    DYNAMODB_TAXONOMY_TABLE: str = os.environ.get("DYNAMODB_TAXONOMY_TABLE", "myblog-taxonomy")
+    DYNAMODB_SETTINGS_TABLE: str = os.environ.get("DYNAMODB_SETTINGS_TABLE", "myblog-settings")
+    DYNAMODB_REPORTS_TABLE: str = os.environ.get("DYNAMODB_REPORTS_TABLE", "myblog-reports")
 
     # ── App ────────────────────────────────────────────────────────
     ADMIN_USERNAME: str = os.environ.get("ADMIN_USERNAME", "admin")
     POSTS_PER_PAGE: int = 6
+
 
 
 class DevelopmentConfig(BaseConfig):

@@ -1,0 +1,90 @@
+{% extends "base.html" %}
+
+{% block title %}REST API Documentation — My-Blog{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-lg-10">
+        <div class="card-doodle p-4 mb-4">
+            <h2 class="mb-2">⚡ REST API v1 Documentation</h2>
+            <p class="text-muted">Integrate third-party clients and applications with the My-Blog platform REST API.</p>
+            
+            <div class="alert alert-info">
+                <strong>Base URL:</strong> <code>/api/v1/</code>
+            </div>
+
+            <div class="accordion" id="apiAccordion">
+                <div class="accordion-item mb-2">
+                    <h2 class="accordion-header">
+                        <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#ep1">
+                            <span class="badge bg-success me-2">GET</span> <code>/api/v1/posts</code> — List Published Posts
+                        </button>
+                    </h2>
+                    <div id="ep1" class="accordion-collapse collapse show" data-bs-parent="#apiAccordion">
+                        <div class="accordion-body">
+                            <p>Query parameters: <code>page</code> (int), <code>search</code> (string), <code>category</code> (slug)</p>
+                            <pre class="bg-light p-3 rounded">GET /api/v1/posts?page=1&search=security
+
+Response 200 OK:
+{
+  "status": "success",
+  "page": 1,
+  "total": 42,
+  "results": [...]
+}</pre>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="accordion-item mb-2">
+                    <h2 class="accordion-header">
+                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#ep2">
+                            <span class="badge bg-success me-2">GET</span> <code>/api/v1/posts/{post_id}</code> — Get Single Post Detail
+                        </button>
+                    </h2>
+                    <div id="ep2" class="accordion-collapse collapse" data-bs-parent="#apiAccordion">
+                        <div class="accordion-body">
+                            <pre class="bg-light p-3 rounded">GET /api/v1/posts/9a7d3f11-4b2a-466d-91b4-82f551c6ef02
+
+Response 200 OK:
+{
+  "status": "success",
+  "data": {
+    "post_id": "9a7d3f11-4b2a-466d-91b4-82f551c6ef02",
+    "title": "Cloud-Native Security",
+    "content": "...",
+    "author": "allen",
+    "created_at": "2026-08-30T05:00:00Z"
+  }
+}</pre>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="accordion-item mb-2">
+                    <h2 class="accordion-header">
+                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#ep3">
+                            <span class="badge bg-success me-2">GET</span> <code>/api/health</code> — Health & Dependency Check
+                        </button>
+                    </h2>
+                    <div id="ep3" class="accordion-collapse collapse" data-bs-parent="#apiAccordion">
+                        <div class="accordion-body">
+                            <pre class="bg-light p-3 rounded">GET /api/health
+
+Response 200 OK:
+{
+  "status": "ok",
+  "uptime_seconds": 342.1,
+  "checks": {
+    "dynamodb": "ok",
+    "s3": "ok"
+  }
+}</pre>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -44,23 +44,119 @@ def create_app(config_name: str = "production") -> Flask:
     # ── Models ───────────────────────────────────────────────────
     from .models.post import PostModel
     from .models.user import UserModel
+    from .models.comment import CommentModel
+    from .models.interaction import InteractionModel
+    from .models.notification import NotificationModel
+    from .models.audit import AuditModel
+    from .models.category_tag import CategoryTagModel
+    from .models.settings import SettingsModel
+    from .models.report import ReportModel
 
     app.post_model = PostModel(app.dynamodb, app.config["DYNAMODB_POSTS_TABLE"])
     app.user_model = UserModel(app.dynamodb, app.config["DYNAMODB_USERS_TABLE"])
+    app.comment_model = CommentModel(app.dynamodb, app.config.get("DYNAMODB_COMMENTS_TABLE", "myblog-comments"))
+    app.interaction_model = InteractionModel(app.dynamodb, app.config.get("DYNAMODB_INTERACTIONS_TABLE", "myblog-interactions"))
+    app.notification_model = NotificationModel(app.dynamodb, app.config.get("DYNAMODB_NOTIFICATIONS_TABLE", "myblog-notifications"))
+    app.audit_model = AuditModel(app.dynamodb, app.config.get("DYNAMODB_AUDIT_TABLE", "myblog-audit"))
+    app.taxonomy_model = CategoryTagModel(app.dynamodb, app.config.get("DYNAMODB_TAXONOMY_TABLE", "myblog-taxonomy"))
+    app.settings_model = SettingsModel(app.dynamodb, app.config.get("DYNAMODB_SETTINGS_TABLE", "myblog-settings"))
+    app.report_model = ReportModel(app.dynamodb, app.config.get("DYNAMODB_REPORTS_TABLE", "myblog-reports"))
+
+    # Ensure admin user has admin role
+    admin_user = app.config.get("ADMIN_USERNAME", "admin")
+    if app.user_model.exists(admin_user):
+        app.user_model.update_role(admin_user, "admin")
+
+    # ── Services ─────────────────────────────────────────────────
+    from .services.scheduler import scheduler
+    scheduler.init_app(app)
 
     # ── Blueprints ───────────────────────────────────────────────
     from .routes.auth import auth_bp
     from .routes.posts import posts_bp
+    from .routes.social import social_bp
+    from .routes.comments import comments_bp
+    from .routes.taxonomy import taxonomy_bp
+    from .routes.search import search_bp
+    from .routes.analytics import analytics_bp
+    from .routes.admin import admin_bp
+    from .routes.seo_rss import seo_bp
     from .routes.api import api_bp
 
     app.register_blueprint(auth_bp)
     app.register_blueprint(posts_bp)
+    app.register_blueprint(social_bp)
+    app.register_blueprint(comments_bp)
+    app.register_blueprint(taxonomy_bp)
+    app.register_blueprint(search_bp)
+    app.register_blueprint(analytics_bp)
+    app.register_blueprint(admin_bp, url_prefix="/admin")
+    app.register_blueprint(seo_bp)
     app.register_blueprint(api_bp, url_prefix="/api")
 
     # ── Context processors ───────────────────────────────────────
     @app.context_processor
     def inject_globals():
-        return {"admin_username": app.config.get("ADMIN_USERNAME", "admin")}
+        unread_count = 0
+        current_user = None
+        from flask import session
+        if "username" in session:
+            current_user = app.user_model.get_by_username(session["username"])
+            if current_user:
+                notifs = app.notification_model.get_user_notifications(session["username"])
+                unread_count = sum(1 for n in notifs if not n.get("read"))
+
+        categories = app.taxonomy_model.list_categories()
+        settings = app.settings_model.get_settings()
+        return {
+            "admin_username": app.config.get("ADMIN_USERNAME", "admin"),
+            "current_user_obj": current_user,
+            "unread_count": unread_count,
+            "global_categories": categories,
+            "site_settings": settings,
+        }
+
+    # ── Session Validation Middleware ────────────────────────────
+    @app.before_request
+    def validate_user_session():
+        from flask import session, redirect, url_for, flash, request
+        # Skip static assets and public health check
+        if request.endpoint in ("static", "api.health"):
+            return None
+
+        if "username" in session:
+            user = app.user_model.get_by_username(session["username"])
+            if not user or user.get("status") in ("suspended", "banned"):
+                session.clear()
+                if request.endpoint not in ("auth.login", "auth.register", "posts.index"):
+                    flash("Your account has been deactivated or suspended.", "danger")
+                    return redirect(url_for("auth.login"))
+            elif user:
+                expected_ver = int(user.get("session_version", 1))
+                actual_ver = int(session.get("session_version", 1))
+                if actual_ver < expected_ver:
+                    session.clear()
+                    if request.endpoint not in ("auth.login", "auth.register", "posts.index"):
+                        flash("Your session has expired. Please sign in again.", "warning")
+                        return redirect(url_for("auth.login"))
+
+    # ── Production Security Headers Middleware ───────────────────
+    @app.after_request
+    def set_security_headers(response):
+        response.headers["X-Content-Type-Options"] = "nosniff"
+        response.headers["X-Frame-Options"] = "SAMEORIGIN"
+        response.headers["Referrer-Policy"] = "strict-origin-when-cross-origin"
+        response.headers["Permissions-Policy"] = "geolocation=(), camera=(), microphone=()"
+        response.headers["Content-Security-Policy"] = (
+            "default-src 'self'; "
+            "script-src 'self' https://cdn.jsdelivr.net; "
+            "style-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://fonts.googleapis.com; "
+            "font-src 'self' https://fonts.gstatic.com; "
+            "img-src 'self' data: https:; "
+            "connect-src 'self'; "
+            "frame-ancestors 'none';"
+        )
+        return response
 
     # ── Error handlers ───────────────────────────────────────────
     _register_error_handlers(app)
@@ -69,6 +165,7 @@ def create_app(config_name: str = "production") -> Flask:
     _setup_logging(app)
 
     return app
+
 
 
 def _register_error_handlers(app: Flask) -> None:

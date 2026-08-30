@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+
+{% block title %}Saved Drafts — My-Blog{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-lg-9">
+        <div class="card-doodle p-4">
+            <h2 class="mb-4">📝 Saved Drafts</h2>
+            {% for draft in drafts %}
+                <div class="border-bottom py-3 d-flex justify-content-between align-items-center">
+                    <div>
+                        <h5><a href="{{ url_for('posts.edit_post', post_id=draft.post_id) }}" class="text-dark text-decoration-none">{{ draft.title or 'Untitled Draft' }}</a></h5>
+                        <p class="text-muted small mb-0">Last updated: {{ draft.updated_at[:16].replace('T', ' ') if draft.updated_at else draft.created_at[:16].replace('T', ' ') }}</p>
+                    </div>
+                    <div>
+                        <a href="{{ url_for('posts.edit_post', post_id=draft.post_id) }}" class="btn btn-sm btn-outline-primary me-2">Continue Editing</a>
+                    </div>
+                </div>
+            {% else %}
+                <p class="text-muted">You have no saved drafts.</p>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+{% endblock %}

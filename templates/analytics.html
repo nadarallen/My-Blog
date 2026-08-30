@@ -1,0 +1,70 @@
+{% extends "base.html" %}
+
+{% block title %}Author Analytics — My-Blog{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-lg-10">
+        <h2 class="mb-4">📊 Author Analytics Dashboard</h2>
+
+        <!-- Metric Cards -->
+        <div class="row mb-4">
+            <div class="col-md-3 mb-3">
+                <div class="card-doodle p-3 text-center">
+                    <h3 class="text-primary mb-1">{{ total_views }}</h3>
+                    <div class="text-muted small">Total Views</div>
+                </div>
+            </div>
+            <div class="col-md-3 mb-3">
+                <div class="card-doodle p-3 text-center">
+                    <h3 class="text-danger mb-1">{{ total_likes }}</h3>
+                    <div class="text-muted small">Total Likes</div>
+                </div>
+            </div>
+            <div class="col-md-3 mb-3">
+                <div class="card-doodle p-3 text-center">
+                    <h3 class="text-warning mb-1">{{ total_bookmarks }}</h3>
+                    <div class="text-muted small">Bookmarks</div>
+                </div>
+            </div>
+            <div class="col-md-3 mb-3">
+                <div class="card-doodle p-3 text-center">
+                    <h3 class="text-info mb-1">{{ followers_count }}</h3>
+                    <div class="text-muted small">Followers</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Top Performing Stories -->
+        <div class="card-doodle p-4 mb-4">
+            <h4 class="mb-3">🔥 Top Performing Stories</h4>
+            <div class="table-responsive">
+                <table class="table align-middle mb-0">
+                    <thead>
+                        <tr>
+                            <th>Story Title</th>
+                            <th>Views</th>
+                            <th>Likes</th>
+                            <th>Comments</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for post in top_posts %}
+                            <tr>
+                                <td><a href="{{ url_for('posts.view_post', post_id=post.post_id) }}" class="text-dark font-weight-bold text-decoration-none">{{ post.title }}</a></td>
+                                <td>{{ post.views }}</td>
+                                <td>{{ post.likes_count }}</td>
+                                <td>{{ post.comments_count }}</td>
+                                <td><span class="badge bg-success">{{ post.status | title }}</span></td>
+                            </tr>
+                        {% else %}
+                            <tr><td colspan="5" class="text-muted text-center">No post data available.</td></tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,68 @@
+{% extends "base.html" %}
+
+{% block title %}Reports Queue — Admin — My-Blog{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-lg-3 mb-4">
+        <div class="card-doodle p-3">
+            <h5 class="mb-3">🛡️ Admin Console</h5>
+            <div class="list-group list-group-flush">
+                <a href="{{ url_for('admin.dashboard') }}" class="list-group-item list-group-item-action">Overview</a>
+                <a href="{{ url_for('admin.manage_users') }}" class="list-group-item list-group-item-action">Users & Roles</a>
+                <a href="{{ url_for('admin.manage_posts') }}" class="list-group-item list-group-item-action">Content Moderation</a>
+                <a href="{{ url_for('admin.manage_reports') }}" class="list-group-item list-group-item-action active fw-bold">Reports Queue</a>
+                <a href="{{ url_for('admin.manage_settings') }}" class="list-group-item list-group-item-action">Site Settings</a>
+                <a href="{{ url_for('admin.audit_logs') }}" class="list-group-item list-group-item-action">Security Audit Logs</a>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-9">
+        <div class="card-doodle p-4">
+            <h2 class="mb-4">🚩 Moderation Reports Queue</h2>
+            <div class="table-responsive">
+                <table class="table align-middle">
+                    <thead>
+                        <tr>
+                            <th>Reporter</th>
+                            <th>Type</th>
+                            <th>Reason</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for report in reports %}
+                            <tr>
+                                <td>{{ report.reporter }}</td>
+                                <td><span class="badge bg-info text-dark">{{ report.target_type | upper }}</span></td>
+                                <td>{{ report.reason }}</td>
+                                <td><span class="badge bg-warning text-dark">{{ report.status | title }}</span></td>
+                                <td>
+                                    {% if report.status == 'pending' %}
+                                        <form method="POST" action="{{ url_for('admin.resolve_report', report_id=report.report_id) }}" class="d-inline">
+                                            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                                            <input type="hidden" name="action" value="resolved">
+                                            <button type="submit" class="btn btn-sm btn-success me-1">Resolve</button>
+                                        </form>
+                                        <form method="POST" action="{{ url_for('admin.resolve_report', report_id=report.report_id) }}" class="d-inline">
+                                            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                                            <input type="hidden" name="action" value="dismissed">
+                                            <button type="submit" class="btn btn-sm btn-secondary">Dismiss</button>
+                                        </form>
+                                    {% else %}
+                                        <span class="text-muted small">Resolved</span>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                        {% else %}
+                            <tr><td colspan="5" class="text-muted text-center">No reports in moderation queue.</td></tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
