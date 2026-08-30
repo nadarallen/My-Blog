@@ -29,5 +29,11 @@ static/uploads/
 *.swo
 *.DS_Store
 
-# Deployment docs (not needed in image)
+# Test & Infra artifacts (not needed in container runtime)
+tests/
+infra/
+graphify-out/
+logs/
+.pytest_cache/
 deploy/
+
