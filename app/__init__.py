@@ -30,7 +30,19 @@ def create_app(config_name: str = "production") -> Flask:
 
     # ── Config ──────────────────────────────────────────────────
     app.config.from_object(config_by_name.get(config_name, config_by_name["production"]))
+    if config_name == "production" and not app.config.get("SECRET_KEY"):
+        raise ValueError("Production configuration requires a non-empty SECRET_KEY environment variable.")
     app.config["START_TIME"] = _START_TIME
+
+    # ── Reverse proxy support (ALB / CloudFront / Nginx) ────────
+    from werkzeug.middleware.proxy_fix import ProxyFix
+    app.wsgi_app = ProxyFix(
+        app.wsgi_app,
+        x_for=1,
+        x_proto=1,
+        x_host=1,
+        x_prefix=1,
+    )
 
     # ── Flask extensions ─────────────────────────────────────────
     csrf.init_app(app)
@@ -94,20 +106,53 @@ def create_app(config_name: str = "production") -> Flask:
     app.register_blueprint(seo_bp)
     app.register_blueprint(api_bp, url_prefix="/api")
 
+    # ── In-Memory Read Caches (TTL: 60s) to minimize DynamoDB RCUs ───
+    _cache = {
+        "categories": {"data": None, "expires": 0},
+        "settings": {"data": None, "expires": 0},
+    }
+
+    def _get_cached_categories():
+        now = time.time()
+        cached = _cache["categories"]
+        if cached["data"] is not None and now < cached["expires"]:
+            return cached["data"]
+        try:
+            data = app.taxonomy_model.list_categories()
+            _cache["categories"] = {"data": data, "expires": now + 60}
+            return data
+        except Exception:
+            return cached["data"] or []
+
+    def _get_cached_settings():
+        now = time.time()
+        cached = _cache["settings"]
+        if cached["data"] is not None and now < cached["expires"]:
+            return cached["data"]
+        try:
+            data = app.settings_model.get_settings()
+            _cache["settings"] = {"data": data, "expires": now + 60}
+            return data
+        except Exception:
+            return cached["data"] or {}
+
     # ── Context processors ───────────────────────────────────────
     @app.context_processor
     def inject_globals():
         unread_count = 0
-        current_user = None
-        from flask import session
-        if "username" in session:
+        from flask import session, g
+        # Re-use user object resolved during validate_user_session (zero duplicate DB calls)
+        current_user = getattr(g, "current_user", None)
+        if current_user is None and "username" in session:
             current_user = app.user_model.get_by_username(session["username"])
-            if current_user:
-                notifs = app.notification_model.get_user_notifications(session["username"])
-                unread_count = sum(1 for n in notifs if not n.get("read"))
+            g.current_user = current_user
 
-        categories = app.taxonomy_model.list_categories()
-        settings = app.settings_model.get_settings()
+        if current_user:
+            notifs = app.notification_model.get_user_notifications(session["username"])
+            unread_count = sum(1 for n in notifs if not n.get("read"))
+
+        categories = _get_cached_categories()
+        settings = _get_cached_settings()
         return {
             "admin_username": app.config.get("ADMIN_USERNAME", "admin"),
             "current_user_obj": current_user,
@@ -119,7 +164,8 @@ def create_app(config_name: str = "production") -> Flask:
     # ── Session Validation Middleware ────────────────────────────
     @app.before_request
     def validate_user_session():
-        from flask import session, redirect, url_for, flash, request
+        from flask import session, redirect, url_for, flash, request, g
+        g.current_user = None
         # Skip static assets and public health check
         if request.endpoint in ("static", "api.health"):
             return None
@@ -139,6 +185,7 @@ def create_app(config_name: str = "production") -> Flask:
                     if request.endpoint not in ("auth.login", "auth.register", "posts.index"):
                         flash("Your session has expired. Please sign in again.", "warning")
                         return redirect(url_for("auth.login"))
+                g.current_user = user
 
     # ── Production Security Headers Middleware ───────────────────
     @app.after_request

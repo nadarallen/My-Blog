@@ -16,20 +16,31 @@
     {% block extra_head %}{% endblock %}
 </head>
 <body>
+    <!-- Accessibility Skip Link -->
+    <a href="#main-content" class="skip-link">Skip to main content</a>
+
     <!-- Top Doodle Banner Header -->
     <header class="doodle-header">
-        <div class="container d-flex flex-column flex-md-row align-items-center justify-content-between py-3">
-            <a class="site-logo" href="{{ url_for('posts.index') }}">My-Blog<span>.</span></a>
+        <div class="container d-flex flex-wrap align-items-center justify-content-between py-3">
+            <div class="d-flex align-items-center justify-content-between w-100-mobile">
+                <a class="site-logo" href="{{ url_for('posts.index') }}">My-Blog<span>.</span></a>
+                <div class="d-flex align-items-center d-md-none">
+                    <button id="themeToggleMobile" class="btn-theme-toggle me-2" title="Toggle Light/Dark Theme" aria-label="Toggle Dark Mode">🌙</button>
+                    <button class="navbar-toggler-doodle" type="button" aria-controls="mobileNav" aria-expanded="false" aria-label="Toggle navigation" id="navToggle">
+                        ☰
+                    </button>
+                </div>
+            </div>
             
             <!-- Global Search Form -->
             <form action="{{ url_for('posts.index') }}" method="GET" class="search-form my-2 my-md-0">
                 <input type="text" name="q" placeholder="Search stories..." value="{{ search or '' }}" aria-label="Search" class="search-input">
-                <button type="submit" class="search-btn">
+                <button type="submit" class="search-btn" aria-label="Submit search">
                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
                 </button>
             </form>
 
-            <nav class="doodle-nav d-flex align-items-center flex-wrap">
+            <nav id="mobileNav" class="doodle-nav d-flex align-items-center flex-wrap">
                 <a href="{{ url_for('posts.index') }}" class="nav-link-custom me-2">Home</a>
                 <a href="{{ url_for('search.search') }}" class="nav-link-custom me-2">Explore</a>
                 {% if 'username' in session %}
@@ -58,13 +69,13 @@
                     <a href="{{ url_for('auth.login') }}" class="nav-link-custom ms-2 me-2">Login</a>
                     <a href="{{ url_for('auth.register') }}" class="btn-doodle-sm ms-1">Register</a>
                 {% endif %}
-                <button id="themeToggle" class="btn-theme-toggle ms-2" title="Toggle Light/Dark Theme" aria-label="Toggle Dark Mode">🌙</button>
+                <button id="themeToggle" class="btn-theme-toggle ms-2 d-none d-md-flex" title="Toggle Light/Dark Theme" aria-label="Toggle Dark Mode">🌙</button>
             </nav>
         </div>
     </header>
 
     <!-- Main Container -->
-    <main class="container py-4 my-2">
+    <main id="main-content" class="container py-4 my-2">
         <!-- Flash Messages -->
         {% with messages = get_flashed_messages(with_categories=true) %}
         {% if messages %}

@@ -6,6 +6,13 @@ from flask import Blueprint, current_app, jsonify, render_template, request
 api_bp = Blueprint("api", __name__)
 
 
+_HEALTH_CACHE = {
+    "cached_result": None,
+    "expires_at": 0,
+    "status_code": 200,
+}
+
+
 @api_bp.route("/health")
 def health():
     """
@@ -16,10 +23,17 @@ def health():
       - S3 bucket is reachable
 
     Returns 200 if all healthy, 503 if any dependency is degraded.
+    Caches successful probe for 10 seconds to throttle AWS API quota consumption.
     """
+    now = time.time()
+    if _HEALTH_CACHE["cached_result"] is not None and now < _HEALTH_CACHE["expires_at"]:
+        cached = dict(_HEALTH_CACHE["cached_result"])
+        cached["uptime_seconds"] = round(now - current_app.config["START_TIME"], 1)
+        return jsonify(cached), _HEALTH_CACHE["status_code"]
+
     result = {
         "status": "ok",
-        "uptime_seconds": round(time.time() - current_app.config["START_TIME"], 1),
+        "uptime_seconds": round(now - current_app.config["START_TIME"], 1),
         "checks": {},
     }
 
@@ -43,6 +57,9 @@ def health():
         current_app.logger.error("Health/S3: %s", exc)
 
     status_code = 200 if result["status"] == "ok" else 503
+    _HEALTH_CACHE["cached_result"] = result
+    _HEALTH_CACHE["expires_at"] = now + 10  # 10 second cache
+    _HEALTH_CACHE["status_code"] = status_code
     return jsonify(result), status_code
 
 

@@ -1,8 +1,9 @@
 # AWS Free-Tier Production Deployment Report — My-Blog
 
-**Deployment Target**: AWS Free-Tier Single EC2 + DynamoDB + S3 Architecture  
-**Date**: August 30, 2026  
+**AWS Account**: `922930151841`  
 **AWS Region**: `ap-south-1` (Mumbai)  
+**Deployment Status**: `BLOCKED` (AWS Service Subscription Pending Activation on AWS Account `922930151841`)  
+**Date**: August 31, 2026  
 
 > [!NOTE]
 > **Cost Disclaimer**: Designed to remain within applicable AWS Free Tier allowances under the documented usage assumptions. Actual AWS charges depend on account eligibility, usage, region, resource configuration, and AWS pricing.
@@ -41,18 +42,19 @@
 2. **SSM Parameter Store Key Cryptography**: Secret key auto-generated (64-char) and stored in encrypted SSM Parameter Store.
 3. **SSM Session Manager Access**: Public SSH port 22 is disabled. Administrative access uses IAM-authenticated AWS Systems Manager.
 4. **Media Security**: S3 Bucket blocks public access; image views use 1-hour presigned URLs.
-5. **App Security**: Argon2id password hashing, RBAC decorators, CSRF protection, Bleach XSS sanitization, and production HTTP security headers (`CSP`, `X-Content-Type-Options`, `X-Frame-Options`, `HSTS`).
+5. **App Security**: Argon2id password hashing, RBAC decorators, CSRF protection, Bleach XSS sanitization, and production HTTP security headers (`CSP`, `X-Content-Type-Options`, `X-Frame-Options`).
+6. **HTTPS Status**: `NOT CONFIGURED` (Architecture uses direct Elastic IP; HTTPS requires a custom domain with Let's Encrypt / Certbot or CDN).
 
 ---
 
 ## 4. Test Suite Execution Results
 
 ```text
-======================= 79 passed, 0 failed in 13.73s =======================
+===================== 79 passed, 1406 warnings in 14.07s =====================
 ```
-* **Original Tests**: 76 passed, 0 failed.
-* **Deployment Tests**: 3 passed, 0 failed (testing production config, `/api/health`, and scheduler distributed locking).
-* **Terraform Validation**: `Success! The configuration is valid.` (0 errors, 0 warnings).
+* **Test Suite**: 79 passed, 0 failed.
+* **Terraform Validation**: `Success! The configuration is valid.` (0 errors).
+* **Terraform Plan**: 23 to add, 0 to change, 0 to destroy (Data source resolution blocked by AWS service subscription activation requirement on account `922930151841`).
 
 ---
 

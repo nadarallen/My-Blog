@@ -690,14 +690,210 @@ body.dark-theme h1, body.dark-theme h2, body.dark-theme h3, body.dark-theme h4, 
     border: 3px solid var(--border-color);
 }
 
+.avatar-circle-sm {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    background: var(--primary-light);
+    color: var(--primary);
+    font-weight: 700;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.75rem;
+    border: 2px solid var(--border-color);
+}
+
 .btn-theme-toggle {
     background: transparent;
     border: 2px solid var(--border-color);
     border-radius: 50%;
-    width: 36px;
-    height: 36px;
+    width: 40px;
+    height: 40px;
+    min-width: 40px;
+    min-height: 40px;
     display: flex;
     align-items: center;
     justify-content: center;
     cursor: pointer;
+    font-size: 1.1rem;
+    transition: transform 0.2s ease, background-color 0.2s ease;
+}
+
+.btn-theme-toggle:hover {
+    transform: scale(1.1);
+    background-color: var(--primary-light);
+}
+
+/* ── Accessibility & Focus Navigation ────────────────────── */
+:focus-visible {
+    outline: 3px dashed var(--primary) !important;
+    outline-offset: 3px !important;
+}
+
+.skip-link {
+    position: absolute;
+    top: -100px;
+    left: 20px;
+    background: var(--primary);
+    color: #ffffff !important;
+    padding: 10px 18px;
+    border-radius: 8px;
+    border: 2px solid var(--border-color);
+    z-index: 9999;
+    font-weight: 700;
+    transition: top 0.2s ease;
+}
+
+.skip-link:focus {
+    top: 15px;
+}
+
+/* ── Typography & Optimal Long-form Reading Layout ───────── */
+.prose-reading {
+    max-width: 68ch;
+    margin-left: auto;
+    margin-right: auto;
+    font-size: 1.125rem;
+    line-height: 1.8;
+    color: var(--text-primary);
+}
+
+.prose-reading p {
+    margin-bottom: 1.5rem;
+}
+
+.prose-reading h2, .prose-reading h3, .prose-reading h4 {
+    margin-top: 2rem;
+    margin-bottom: 1rem;
+    line-height: 1.35;
+    letter-spacing: -0.02em;
+}
+
+.prose-reading blockquote {
+    border-left: 4px solid var(--primary);
+    background: var(--primary-light);
+    padding: 1rem 1.5rem;
+    margin: 1.5rem 0;
+    border-radius: 0 12px 12px 0;
+    font-style: italic;
+    color: var(--text-primary);
+}
+
+.prose-reading pre {
+    background: #1e293b;
+    color: #f8fafc;
+    padding: 1.25rem;
+    border-radius: 12px;
+    border: 2px solid var(--border-color);
+    overflow-x: auto;
+    margin: 1.5rem 0;
+    font-size: 0.95rem;
+}
+
+.prose-reading code {
+    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+    background: rgba(99, 102, 241, 0.12);
+    color: var(--primary);
+    padding: 0.2rem 0.4rem;
+    border-radius: 4px;
+    font-size: 0.9em;
+}
+
+.prose-reading pre code {
+    background: transparent;
+    color: inherit;
+    padding: 0;
+}
+
+.prose-reading img {
+    max-width: 100%;
+    height: auto;
+    border-radius: 12px;
+    border: 3px solid var(--border-color);
+    margin: 1.5rem 0;
+}
+
+.prose-reading hr {
+    border: none;
+    border-top: 2px dashed var(--border-color);
+    margin: 2rem 0;
+    opacity: 0.5;
+}
+
+/* ── Mobile Navigation & Responsiveness ──────────────────── */
+.navbar-toggler-doodle {
+    background: white;
+    border: 2.5px solid var(--border-color);
+    border-radius: 8px;
+    padding: 6px 12px;
+    font-size: 1.25rem;
+    cursor: pointer;
+    box-shadow: 2px 2px 0px var(--border-color);
+    transition: transform 0.1s ease;
+}
+
+.navbar-toggler-doodle:active {
+    transform: translate(2px, 2px);
+    box-shadow: none;
+}
+
+body.dark-theme .navbar-toggler-doodle {
+    background: #1e293b;
+    color: #f8fafc;
+}
+
+@media (max-width: 767.98px) {
+    .w-100-mobile {
+        width: 100%;
+    }
+    
+    .doodle-nav {
+        display: none !important;
+        width: 100%;
+        flex-direction: column;
+        align-items: stretch !important;
+        margin-top: 1rem;
+        padding-top: 1rem;
+        border-top: 2px dashed var(--border-color);
+        gap: 8px;
+    }
+    
+    .doodle-nav.show {
+        display: flex !important;
+    }
+    
+    .doodle-nav .nav-link-custom,
+    .doodle-nav .btn-doodle-sm,
+    .doodle-nav .btn-doodle-logout {
+        min-height: 44px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1rem;
+    }
+}
+
+/* ── Button Loading States ───────────────────────────────── */
+.btn-loading {
+    position: relative;
+    pointer-events: none;
+    opacity: 0.8;
+}
+
+.btn-loading::after {
+    content: "";
+    display: inline-block;
+    width: 0.9rem;
+    height: 0.9rem;
+    vertical-align: middle;
+    border: 2px solid currentColor;
+    border-right-color: transparent;
+    border-radius: 50%;
+    animation: btnSpin 0.75s linear infinite;
+    margin-left: 0.5rem;
+}
+
+@keyframes btnSpin {
+    to { transform: rotate(360deg); }
 }

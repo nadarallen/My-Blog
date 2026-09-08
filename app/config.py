@@ -20,7 +20,9 @@ class BaseConfig:
     WTF_CSRF_SSL_STRICT: bool = False
 
     # ── Flask-Limiter ──────────────────────────────────────────────
-    RATELIMIT_STORAGE_URL: str = "memory://"
+    RATELIMIT_STORAGE_URL: str = os.environ.get("REDIS_URL") or os.environ.get(
+        "RATELIMIT_STORAGE_URL", "memory://"
+    )
 
     # ── AWS (resolved from EC2 IAM Instance Role — no keys needed) ─
     AWS_REGION: str = os.environ.get("AWS_REGION", "ap-south-1")
@@ -53,6 +55,10 @@ class ProductionConfig(BaseConfig):
     DEBUG: bool = False
     FLASK_ENV: str = "production"
     PROPAGATE_EXCEPTIONS: bool = False
+    # In production with HTTPS, enforce secure cookie and CSRF flags
+    # Can be overridden via env var for local testing without SSL
+    SESSION_COOKIE_SECURE: bool = os.environ.get("SESSION_COOKIE_SECURE", "true").lower() == "true"
+    WTF_CSRF_SSL_STRICT: bool = os.environ.get("WTF_CSRF_SSL_STRICT", "true").lower() == "true"
     # On EC2: IAM Instance Role provides AWS credentials automatically
 
 

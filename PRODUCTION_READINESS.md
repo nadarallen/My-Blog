@@ -9,7 +9,7 @@ This document details the production readiness verification, security posture, s
 - [x] **Authentication**: Argon2id memory-hard hashing (`time_cost=2`, `memory_cost=64MB`, `parallelism=2`). Timing-safe dummy hashing on failed lookups.
 - [x] **Authorization & RBAC**: Strict server-side decorators (`@login_required`, `@author_required`, `@role_required`, `@moderator_required`, `@admin_required`). Zero trust in frontend claims.
 - [x] **Session Security**:
-  - `HttpOnly=True`, `SameSite=Lax`, `Secure=True` (in production HTTPS).
+  - `HttpOnly=True`, `SameSite=Lax`, `Secure=False` (HTTP mode over Elastic IP; `Secure=True` when HTTPS is enabled via domain).
   - Session regeneration on login to eliminate session fixation.
   - Active session invalidation on user password change, suspension, and banning via DynamoDB `session_version` matching.
 - [x] **CSRF Defense**: Automatic Flask-WTF CSRF tokens on all state-changing browser requests (POST, PUT, DELETE).
@@ -96,7 +96,7 @@ This document details the production readiness verification, security posture, s
 
 ### Free Tier Safeguards
 - **Zero Paid Add-ons**: Excluded NAT Gateway (~$32/mo), ALB (~$18/mo), RDS (~$15/mo), Secrets Manager (~$0.40/mo).
-- **Monthly Cost**: **$0.00** during 12-month AWS Free Tier allowance.
+- **Cost Disclaimer**: Designed to remain within applicable AWS Free Tier allowances under the documented usage assumptions. Actual AWS charges depend on account eligibility, usage, region, resource configuration, and AWS pricing.
 
 ### Operational Limitations
 - Single EC2 instance (restarts require ~1–2 mins auto-recovery via systemd/Docker).
