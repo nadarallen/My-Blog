@@ -304,7 +304,7 @@ class PostModel:
         except Exception:
             return False
 
-    def publish_scheduled() -> int:
+    def publish_scheduled(self) -> int:
         """Find and publish any scheduled posts whose scheduled_at timestamp has passed."""
         now = datetime.now(timezone.utc).isoformat()
         published_count = 0
