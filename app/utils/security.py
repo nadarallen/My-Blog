@@ -108,22 +108,40 @@ def sanitize_rendered_markdown(html: str) -> str:
 
 def is_safe_redirect_url(url: str, host: str) -> bool:
     """
-    Validate that a redirect URL is safe (relative path, same host).
+    Validate that a redirect URL is safe (relative path or strictly same host).
 
-    Prevents open redirect attacks via ?next=http://evil.com where an
-    attacker tricks a user into clicking a login URL and gets redirected
-    to a phishing page after a successful login.
+    Prevents open redirect attacks via ?next=http://evil.com, protocol-relative
+    bypasses (//evil.com, ///evil.com, /\\evil.com, \\\\evil.com), or CRLF injections.
 
     Allows:
-        /home, /posts/123, /create
+        /home, /posts/123, /create, http://<host>/post/123
     Blocks:
-        http://evil.com, //evil.com, javascript:alert(1)
+        http://evil.com, //evil.com, ///evil.com, /\\evil.com, \\\\evil.com, javascript:alert(1)
     """
     if not url:
         return False
+
+    url = url.strip()
+    if any(c in url for c in ("\r", "\n", "\t")):
+        return False
+
+    # Reject protocol-relative and backslash evasion
+    if url.startswith(("//", "/\\", "\\", "\\\\")):
+        return False
+
     parsed = urlparse(url)
-    # Safe: no scheme (relative URL) AND no netloc (no external host)
-    return (not parsed.scheme) and (not parsed.netloc)
+
+    # Relative URL case
+    if not parsed.scheme and not parsed.netloc:
+        return url.startswith("/") and not url.startswith("//")
+
+    # Absolute URL case (e.g. from request.referrer)
+    if parsed.scheme in ("http", "https"):
+        clean_host = host.split(":")[0].lower() if host else ""
+        clean_netloc = parsed.netloc.split(":")[0].lower()
+        return bool(clean_host and clean_netloc == clean_host)
+
+    return False
 
 
 # ──────────────────────────────────────────────────────────────────

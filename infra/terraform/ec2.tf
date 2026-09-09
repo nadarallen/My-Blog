@@ -32,6 +32,13 @@ resource "aws_instance" "app" {
     delete_on_termination = true
   }
 
+  # Enforce IMDSv2 (Defeats SSRF-based IAM credential theft)
+  metadata_options {
+    http_endpoint               = "enabled"
+    http_tokens                 = "required"
+    http_put_response_hop_limit = 1
+  }
+
   # Cloud-init user data script to install Docker, Docker Compose, and launch app
   user_data = <<-EOF
               #!/bin/bash

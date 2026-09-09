@@ -20,9 +20,12 @@ class BaseConfig:
     WTF_CSRF_SSL_STRICT: bool = False
 
     # ── Flask-Limiter ──────────────────────────────────────────────
-    RATELIMIT_STORAGE_URL: str = os.environ.get("REDIS_URL") or os.environ.get(
-        "RATELIMIT_STORAGE_URL", "memory://"
+    RATELIMIT_STORAGE_URI: str = (
+        os.environ.get("RATELIMIT_STORAGE_URI")
+        or os.environ.get("REDIS_URL")
+        or os.environ.get("RATELIMIT_STORAGE_URL", "memory://")
     )
+    RATELIMIT_STORAGE_URL: str = RATELIMIT_STORAGE_URI
 
     # ── AWS (resolved from EC2 IAM Instance Role — no keys needed) ─
     AWS_REGION: str = os.environ.get("AWS_REGION", "ap-south-1")

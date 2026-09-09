@@ -862,3 +862,45 @@ class TestSecurityHelpers:
         assert is_valid_password("12345678") is False      # no letter
         assert is_valid_password("Ab1") is False           # too short
         assert is_valid_password("a" * 73) is False        # too long (>72)
+
+    def test_is_safe_redirect_url_blocks_protocol_relative(self):
+        """is_safe_redirect_url() must reject protocol-relative and evasion URLs."""
+        from app.utils.security import is_safe_redirect_url
+        assert is_safe_redirect_url("/safe/path", "localhost:5000") is True
+        assert is_safe_redirect_url("http://localhost:5000/safe", "localhost:5000") is True
+        assert is_safe_redirect_url("///evil.com", "localhost") is False
+        assert is_safe_redirect_url("//evil.com", "localhost") is False
+        assert is_safe_redirect_url(r"/\evil.com", "localhost") is False
+        assert is_safe_redirect_url(r"\\evil.com", "localhost") is False
+        assert is_safe_redirect_url("http://evil.com", "localhost") is False
+        assert is_safe_redirect_url("javascript:alert(1)", "localhost") is False
+
+    def test_rss_feed_escapes_xml_entities(self, app):
+        """RSS feed must escape XML entities to prevent malformed XML or injection."""
+        with app.test_client() as c:
+            register_user(c, "rss_author", "Pass1234")
+            login_user(c, "rss_author", "Pass1234")
+            c.post("/create", data={
+                "title": "Science & Tech Innovation",
+                "content": "Body content about tech",
+                "category_slug": "general",
+            }, follow_redirects=True)
+            r = c.get("/feed.xml")
+            assert r.status_code == 200
+            assert b"Science &amp; Tech Innovation" in r.data
+
+    def test_admin_rejects_invalid_role_and_status(self, app):
+        """Admin endpoints must reject invalid role or status strings."""
+        with app.test_client() as c:
+            admin_user = app.config.get("ADMIN_USERNAME", "admin")
+            register_user(c, admin_user, "AdminPass123")
+            login_user(c, admin_user, "AdminPass123")
+            register_user(c, "victim_user", "Pass1234")
+
+            # Try invalid role
+            r1 = c.post("/admin/users/role/victim_user", data={"role": "superadmin"}, follow_redirects=True)
+            assert b"Invalid role" in r1.data
+
+            # Try invalid status
+            r2 = c.post("/admin/users/status/victim_user", data={"status": "nuked"}, follow_redirects=True)
+            assert b"Invalid status" in r2.data

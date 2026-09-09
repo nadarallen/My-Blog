@@ -3,9 +3,16 @@ Comments routes: Post comments, nested replies, moderation, reports.
 """
 from flask import Blueprint, current_app, flash, jsonify, redirect, request, session, url_for
 from app.utils.decorators import login_required
-from app.utils.security import parse_mentions, sanitize_text
+from app.utils.security import is_safe_redirect_url, parse_mentions, sanitize_text
 
 comments_bp = Blueprint("comments", __name__)
+
+
+def _safe_referrer_redirect(default_endpoint="posts.index", **kwargs):
+    ref = request.referrer
+    if ref and is_safe_redirect_url(ref, request.host):
+        return redirect(ref)
+    return redirect(url_for(default_endpoint, **kwargs))
 
 
 @comments_bp.route("/comments/add/<post_id>", methods=["POST"])
@@ -13,11 +20,14 @@ comments_bp = Blueprint("comments", __name__)
 def add_comment(post_id):
     content = request.form.get("content", "").strip()
     parent_id = request.form.get("parent_id", "").strip()
-    depth = int(request.form.get("depth", 0))
+    try:
+        depth = int(request.form.get("depth", 0))
+    except (ValueError, TypeError):
+        depth = 0
 
     if not content:
         flash("Comment content cannot be empty.", "warning")
-        return redirect(request.referrer or url_for("posts.view_post", post_id=post_id))
+        return _safe_referrer_redirect("posts.view_post", post_id=post_id)
 
     post = current_app.post_model.get_by_id_no_increment(post_id)
     if not post:
@@ -69,15 +79,15 @@ def delete_comment(comment_id):
     
     if not comment:
         flash("Comment not found.", "danger")
-        return redirect(request.referrer or url_for("posts.index"))
+        return _safe_referrer_redirect("posts.index")
 
     if comment.get("author") != username and user_role not in ("moderator", "admin"):
         flash("Unauthorized to delete this comment.", "danger")
-        return redirect(request.referrer or url_for("posts.index"))
+        return _safe_referrer_redirect("posts.index")
 
     current_app.comment_model.delete(comment_id)
     flash("Comment deleted.", "info")
-    return redirect(request.referrer or url_for("posts.index"))
+    return _safe_referrer_redirect("posts.index")
 
 
 @comments_bp.route("/comments/report/<comment_id>", methods=["POST"])
@@ -95,4 +105,4 @@ def report_comment(comment_id):
             details=f"Comment content: {comment.get('content', '')}",
         )
     flash("Comment reported to moderators. Thank you.", "info")
-    return redirect(request.referrer or url_for("posts.index"))
+    return _safe_referrer_redirect("posts.index")

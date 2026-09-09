@@ -36,10 +36,18 @@ def manage_users():
     return render_template("admin/users.html", users=users)
 
 
+ALLOWED_ROLES = {"user", "moderator", "admin"}
+ALLOWED_STATUSES = {"active", "suspended", "banned"}
+
+
 @admin_bp.route("/users/role/<username>", methods=["POST"])
 @admin_required
 def update_user_role(username):
-    role = request.form.get("role", "user")
+    role = request.form.get("role", "user").strip().lower()
+    if role not in ALLOWED_ROLES:
+        flash(f"Invalid role '{role}'. Allowed: {', '.join(sorted(ALLOWED_ROLES))}", "danger")
+        return redirect(url_for("admin.manage_users"))
+
     current_app.user_model.update_role(username, role)
     current_app.audit_model.log_action(
         actor=session["username"],
@@ -55,7 +63,11 @@ def update_user_role(username):
 @admin_bp.route("/users/status/<username>", methods=["POST"])
 @moderator_required
 def update_user_status(username):
-    status = request.form.get("status", "active")
+    status = request.form.get("status", "active").strip().lower()
+    if status not in ALLOWED_STATUSES:
+        flash(f"Invalid status '{status}'. Allowed: {', '.join(sorted(ALLOWED_STATUSES))}", "danger")
+        return redirect(url_for("admin.manage_users"))
+
     current_app.user_model.update_status(username, status)
     current_app.audit_model.log_action(
         actor=session["username"],

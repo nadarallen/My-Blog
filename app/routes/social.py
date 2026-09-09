@@ -3,8 +3,16 @@ Social routes: Likes, Bookmarks, Follows, Personalized Feed, and Notification Ce
 """
 from flask import Blueprint, current_app, flash, jsonify, redirect, render_template, request, session, url_for
 from app.utils.decorators import login_required
+from app.utils.security import is_safe_redirect_url
 
 social_bp = Blueprint("social", __name__)
+
+
+def _safe_referrer_redirect(default_endpoint="posts.index", **kwargs):
+    ref = request.referrer
+    if ref and is_safe_redirect_url(ref, request.host):
+        return redirect(ref)
+    return redirect(url_for(default_endpoint, **kwargs))
 
 
 @social_bp.route("/like/<post_id>", methods=["POST"])
@@ -34,7 +42,7 @@ def toggle_like(post_id):
         return jsonify({"liked": liked, "likes_count": int(post.get("likes_count", 0)) + (1 if liked else -1)})
 
     flash("Post liked!" if liked else "Post unliked.", "success")
-    return redirect(request.referrer or url_for("posts.view_post", post_id=post_id))
+    return _safe_referrer_redirect("posts.view_post", post_id=post_id)
 
 
 @social_bp.route("/bookmark/<post_id>", methods=["POST"])
@@ -54,7 +62,7 @@ def toggle_bookmark(post_id):
         return jsonify({"bookmarked": bookmarked})
 
     flash("Post saved to bookmarks!" if bookmarked else "Post removed from bookmarks.", "success")
-    return redirect(request.referrer or url_for("posts.view_post", post_id=post_id))
+    return _safe_referrer_redirect("posts.view_post", post_id=post_id)
 
 
 @social_bp.route("/bookmarks")

@@ -1,9 +1,15 @@
-"""
-SEO and RSS routes: sitemap.xml, robots.txt, and RSS/Atom feeds.
-"""
+import html
+from xml.sax.saxutils import escape as xml_escape
+
 from flask import Blueprint, current_app, Response, render_template, url_for
 
 seo_bp = Blueprint("seo", __name__)
+
+
+def _safe_xml(val) -> str:
+    if not val:
+        return ""
+    return xml_escape(html.unescape(str(val)))
 
 
 @seo_bp.route("/sitemap.xml")
@@ -43,22 +49,32 @@ def rss_feed():
     posts, _ = current_app.post_model.get_all_paginated(page=1, per_page=20, status="published")
     settings = current_app.settings_model.get_settings()
     
+    site_title = _safe_xml(settings.get("site_name", "My-Blog"))
+    site_desc = _safe_xml(settings.get("site_description", "Blog Feed"))
+
     xml = ['<?xml version="1.0" encoding="UTF-8"?>']
     xml.append('<rss version="2.0">')
     xml.append('  <channel>')
-    xml.append(f'    <title>{settings.get("site_name", "My-Blog")}</title>')
+    xml.append(f'    <title>{site_title}</title>')
     xml.append(f'    <link>{url_for("posts.index", _external=True)}</link>')
-    xml.append(f'    <description>{settings.get("site_description", "Blog Feed")}</description>')
+    xml.append(f'    <description>{site_desc}</description>')
     xml.append('    <language>en-us</language>')
     
     for post in posts:
+        title = _safe_xml(post.get("title", ""))
+        excerpt = _safe_xml(post.get("excerpt", ""))
+        author = _safe_xml(post.get("author", ""))
+        created_at = _safe_xml(post.get("created_at", ""))
+        guid = _safe_xml(post.get("post_id", ""))
+        link = url_for("posts.view_post", post_id=post["post_id"], _external=True)
+
         xml.append('    <item>')
-        xml.append(f'      <title>{post.get("title", "")}</title>')
-        xml.append(f'      <link>{url_for("posts.view_post", post_id=post["post_id"], _external=True)}</link>')
-        xml.append(f'      <description>{post.get("excerpt", "")}</description>')
-        xml.append(f'      <author>{post.get("author", "")}</author>')
-        xml.append(f'      <pubDate>{post.get("created_at", "")}</pubDate>')
-        xml.append(f'      <guid>{post["post_id"]}</guid>')
+        xml.append(f'      <title>{title}</title>')
+        xml.append(f'      <link>{link}</link>')
+        xml.append(f'      <description>{excerpt}</description>')
+        xml.append(f'      <author>{author}</author>')
+        xml.append(f'      <pubDate>{created_at}</pubDate>')
+        xml.append(f'      <guid>{guid}</guid>')
         xml.append('    </item>')
         
     xml.append('  </channel>')

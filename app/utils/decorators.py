@@ -53,11 +53,12 @@ def author_required(f):
         if post is None:
             abort(404)
 
-        current_user = session["username"]
-        admin = current_app.config.get("ADMIN_USERNAME", "")
+        current_user = session["username"].lower()
+        admin = (current_app.config.get("ADMIN_USERNAME", "") or "").lower()
+        post_author = (post.get("author") or "").lower()
 
         # Authorization check — must be author OR admin
-        if post.get("author") != current_user and current_user != admin:
+        if post_author != current_user and current_user != admin:
             flash("You are not authorized to perform this action.", "danger")
             return redirect(url_for("posts.index"))
 
