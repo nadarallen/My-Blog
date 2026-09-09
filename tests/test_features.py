@@ -73,3 +73,65 @@ def test_api_v1_endpoints(client, app):
     res_docs = client.get("/api/v1/docs")
     assert res_docs.status_code == 200
     assert b"REST API v1 Documentation" in res_docs.data
+
+
+def test_privacy_and_terms_pages(client):
+    res_priv = client.get("/privacy")
+    assert res_priv.status_code == 200
+    assert b"Privacy Policy" in res_priv.data
+    assert b"Cookies &amp; Local Storage" in res_priv.data or b"Cookies" in res_priv.data
+
+    res_terms = client.get("/terms")
+    assert res_terms.status_code == 200
+    assert b"Terms and Conditions" in res_terms.data
+    assert b"Content Guidelines" in res_terms.data or b"Acceptance" in res_terms.data
+
+
+def test_favicon_and_sitemap_legal_pages(client):
+    res_fav = client.get("/favicon.ico")
+    assert res_fav.status_code == 200
+
+    res_sitemap = client.get("/sitemap.xml")
+    assert res_sitemap.status_code == 200
+    assert b"/privacy" in res_sitemap.data
+    assert b"/terms" in res_sitemap.data
+
+    res_robots = client.get("/robots.txt")
+    assert res_robots.status_code == 200
+    assert b"Sitemap:" in res_robots.data
+
+
+def test_secrets_sanitized_from_template_globals(client, app):
+    register_user(client, username="secretless_user", password="Pass1234")
+    login_user(client, username="secretless_user", password="Pass1234")
+
+    # Render a page while logged in and inspect response for leaked password hashes
+    res = client.get("/")
+    assert res.status_code == 200
+    assert b"$argon2" not in res.data
+
+
+def test_image_compression_resizing():
+    import io
+    from PIL import Image
+    from app.utils.storage import compress_and_optimize_image
+
+    # Create a 2400x1800 raw image
+    raw_img = Image.new("RGB", (2400, 1800), color=(100, 150, 200))
+    raw_buf = io.BytesIO()
+    raw_img.save(raw_buf, format="JPEG", quality=100)
+    raw_size = len(raw_buf.getvalue())
+
+    raw_buf.seek(0)
+    compressed_buf, ctype = compress_and_optimize_image(raw_buf, "jpg", max_width=1920, max_height=1080)
+    compressed_size = len(compressed_buf.getvalue())
+
+    assert ctype == "image/jpeg"
+    assert compressed_size < raw_size
+
+    # Verify dimensions resized within bounds
+    compressed_buf.seek(0)
+    out_img = Image.open(compressed_buf)
+    assert out_img.width <= 1920
+    assert out_img.height <= 1080
+

@@ -22,6 +22,8 @@ def sitemap():
     
     xml.append(f"  <url><loc>{url_for('posts.index', _external=True)}</loc><changefreq>daily</changefreq><priority>1.0</priority></url>")
     xml.append(f"  <url><loc>{url_for('search.search', _external=True)}</loc><changefreq>weekly</changefreq><priority>0.5</priority></url>")
+    xml.append(f"  <url><loc>{url_for('seo.privacy_policy', _external=True)}</loc><changefreq>monthly</changefreq><priority>0.3</priority></url>")
+    xml.append(f"  <url><loc>{url_for('seo.terms_of_service', _external=True)}</loc><changefreq>monthly</changefreq><priority>0.3</priority></url>")
     
     for cat in categories:
         xml.append(f"  <url><loc>{url_for('taxonomy.category_view', slug=cat['slug'], _external=True)}</loc><changefreq>weekly</changefreq><priority>0.7</priority></url>")
@@ -42,6 +44,21 @@ Disallow: /api/
 Sitemap: {url_for('seo.sitemap', _external=True)}
 """
     return Response(content, mimetype="text/plain")
+
+
+@seo_bp.route("/privacy")
+def privacy_policy():
+    return render_template("privacy.html")
+
+
+@seo_bp.route("/terms")
+def terms_of_service():
+    return render_template("terms.html")
+
+
+@seo_bp.route("/favicon.ico")
+def favicon():
+    return current_app.send_static_file("favicon.ico")
 
 
 @seo_bp.route("/feed.xml")

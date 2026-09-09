@@ -44,6 +44,7 @@ class BaseConfig:
     # ── App ────────────────────────────────────────────────────────
     ADMIN_USERNAME: str = os.environ.get("ADMIN_USERNAME", "admin")
     POSTS_PER_PAGE: int = 6
+    FORCE_HTTPS: bool = os.environ.get("FORCE_HTTPS", "false").lower() in ("true", "1")
 
 
 
@@ -58,6 +59,8 @@ class ProductionConfig(BaseConfig):
     DEBUG: bool = False
     FLASK_ENV: str = "production"
     PROPAGATE_EXCEPTIONS: bool = False
+    PREFERRED_URL_SCHEME: str = "https"
+    FORCE_HTTPS: bool = os.environ.get("FORCE_HTTPS", "true").lower() in ("true", "1")
     # In production with HTTPS, enforce secure cookie and CSRF flags
     # Can be overridden via env var for local testing without SSL
     SESSION_COOKIE_SECURE: bool = os.environ.get("SESSION_COOKIE_SECURE", "true").lower() == "true"

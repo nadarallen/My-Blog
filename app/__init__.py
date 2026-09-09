@@ -172,7 +172,13 @@ def create_app(config_name: str = "production") -> Flask:
             current_user = app.user_model.get_by_username(session["username"])
             g.current_user = current_user
 
+        safe_user = None
         if current_user:
+            # Strip sensitive cryptographic & session fields from template context
+            safe_user = {
+                k: v for k, v in current_user.items()
+                if k not in ("password_hash", "session_version")
+            }
             notifs = app.notification_model.get_user_notifications(session["username"])
             unread_count = sum(1 for n in notifs if not n.get("read"))
 
@@ -180,7 +186,7 @@ def create_app(config_name: str = "production") -> Flask:
         settings = _get_cached_settings()
         return {
             "admin_username": app.config.get("ADMIN_USERNAME", "admin"),
-            "current_user_obj": current_user,
+            "current_user_obj": safe_user,
             "unread_count": unread_count,
             "global_categories": categories,
             "site_settings": settings,
@@ -194,6 +200,13 @@ def create_app(config_name: str = "production") -> Flask:
         # Skip static assets and public health check
         if request.endpoint in ("static", "api.health"):
             return None
+
+        # Force HTTPS redirect in production if request arrives over plain HTTP
+        if app.config.get("FORCE_HTTPS") and not request.is_secure:
+            proto = request.headers.get("X-Forwarded-Proto", "http").lower()
+            if proto == "http":
+                url = request.url.replace("http://", "https://", 1)
+                return redirect(url, code=301)
 
         if "username" in session:
             user = app.user_model.get_by_username(session["username"])

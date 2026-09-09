@@ -1,0 +1,113 @@
+{% extends "base.html" %}
+
+{% block title %}Privacy Policy — My-Blog{% endblock %}
+{% block meta_description %}Learn how My-Blog protects and respects your personal privacy, manages essential cookies, and secures your data across our cloud infrastructure.{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-lg-10 col-xl-9">
+        <div class="card-doodle p-4 p-md-5 mb-4">
+            <div class="d-flex align-items-center gap-3 mb-4 border-bottom pb-3">
+                <div class="doodle-badge-icon">
+                    <svg class="icon-svg icon-lg text-primary" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
+                </div>
+                <div>
+                    <h1 class="h2 mb-1">Privacy Policy</h1>
+                    <p class="text-muted small mb-0">Effective Date: September 2026 • Version 1.2</p>
+                </div>
+            </div>
+
+            <section class="mb-4">
+                <h2 class="h4 mb-3">1. Overview & Core Philosophy</h2>
+                <p>
+                    Welcome to <strong>My-Blog</strong>. We believe in minimal data collection, radical transparency, and respecting user privacy. This policy outlines what information we collect when you browse, author posts, comment, and interact with our platform, and how that information is safeguarded.
+                </p>
+            </section>
+
+            <section class="mb-4">
+                <h2 class="h4 mb-3">2. Information We Collect</h2>
+                <ul class="list-unstyled ps-3 border-start border-2 border-primary">
+                    <li class="mb-2"><strong>Account Information:</strong> When you register, we collect your chosen username, email address, display name, and a cryptographic hash of your password created with Argon2id. We never store plain-text passwords.</li>
+                    <li class="mb-2"><strong>Content & Contributions:</strong> Articles, stories, comments, tags, and cover images that you voluntarily upload and publish.</li>
+                    <li class="mb-2"><strong>Technical Data:</strong> Anonymized server logs including request paths, response status codes, and user-agent strings used solely for system health, DDoS mitigation, and rate limiting.</li>
+                </ul>
+            </section>
+
+            <section class="mb-4">
+                <h2 class="h4 mb-3">3. Cookies & Local Storage</h2>
+                <p>
+                    We prioritize privacy-preserving architecture. We do not use third-party advertising trackers or invasive behavioral tracking pixels.
+                </p>
+                <div class="table-responsive">
+                    <table class="table table-bordered table-sm mt-2">
+                        <thead class="table-light">
+                            <tr>
+                                <th>Storage Item</th>
+                                <th>Type</th>
+                                <th>Purpose</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><code>session</code></td>
+                                <td>HTTP-Only Secure Cookie</td>
+                                <td>Maintains your authenticated session state and protects against session fixation.</td>
+                            </tr>
+                            <tr>
+                                <td><code>csrf_token</code></td>
+                                <td>HTTP-Only Secure Cookie</td>
+                                <td>Prevents Cross-Site Request Forgery (CSRF) attacks.</td>
+                            </tr>
+                            <tr>
+                                <td><code>theme</code></td>
+                                <td>Local Storage</td>
+                                <td>Remembers your Light Mode or Dark Mode visual preference.</td>
+                            </tr>
+                            <tr>
+                                <td><code>myblog_cookie_consent</code></td>
+                                <td>Local Storage</td>
+                                <td>Records your acknowledgment of this privacy and cookie policy.</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <section class="mb-4">
+                <h2 class="h4 mb-3">4. How We Protect Your Data</h2>
+                <p>
+                    Our cloud infrastructure is architected according to OWASP and cloud-native security best practices:
+                </p>
+                <ul>
+                    <li><strong>Encryption in Transit:</strong> All web traffic is strictly encrypted using TLS/HTTPS with HTTP Strict Transport Security (HSTS).</li>
+                    <li><strong>Encryption at Rest:</strong> Database records in Amazon DynamoDB and media files stored in Amazon S3 are encrypted using AES-256 server-side encryption.</li>
+                    <li><strong>Access Control:</strong> Fine-grained least-privilege IAM roles with IMDSv2 protection on EC2 computing instances.</li>
+                </ul>
+            </section>
+
+            <section class="mb-4">
+                <h2 class="h4 mb-3">5. Your Rights & Data Portability</h2>
+                <p>
+                    Under applicable data protection laws (including GDPR and CCPA), you have the right to:
+                </p>
+                <ul>
+                    <li>Access and review the personal data associated with your profile.</li>
+                    <li>Edit or update your account information and stories at any time.</li>
+                    <li>Permanently delete your account and all associated authored content directly from your Account Settings.</li>
+                </ul>
+            </section>
+
+            <section class="mb-4">
+                <h2 class="h4 mb-3">6. Contact & Privacy Inquiries</h2>
+                <p>
+                    If you have questions about this Privacy Policy or wish to submit a data inquiry, contact the platform administration at:
+                </p>
+                <p class="mb-0">
+                    <strong>Email:</strong> <a href="mailto:privacy@myblog.local">privacy@myblog.local</a><br>
+                    <strong>Platform Admin:</strong> Contact via <a href="{{ url_for('posts.index') }}">Support & Discussion</a>
+                </p>
+            </section>
+        </div>
+    </div>
+</div>
+{% endblock %}

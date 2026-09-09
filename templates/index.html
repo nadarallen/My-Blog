@@ -18,7 +18,7 @@
                 <div class="pin-media-wrapper">
                     {% if post['image_url'] %}
                         <a href="{{ url_for('posts.view_post', post_id=post['post_id']) }}">
-                            <img src="{{ post['image_url'] }}" class="pin-media-img" alt="{{ post['title'] }}" loading="lazy">
+                            <img src="{{ post['image_url'] }}" class="pin-media-img" alt="Cover preview for {{ post['title'] }}" loading="lazy">
                         </a>
                     {% else %}
                         <a href="{{ url_for('posts.view_post', post_id=post['post_id']) }}" class="pin-media-fallback fallback-{{ (post.get('category_slug') or 'general') | lower }} text-decoration-none">

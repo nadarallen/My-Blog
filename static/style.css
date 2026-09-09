@@ -1485,3 +1485,77 @@ body.dark-theme .pin-media-fallback.fallback-technology {
 body.dark-theme .pin-media-fallback.fallback-tech::after {
     background-image: radial-gradient(rgba(167, 243, 208, 0.12) 1.2px, transparent 1.2px);
 }
+
+/* ── Cookie Consent Banner ──────────────────────────────────── */
+.cookie-banner {
+    position: fixed;
+    bottom: 24px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: calc(100% - 32px);
+    max-width: 960px;
+    background: #ffffff;
+    border: 3px solid var(--border-color, #18181b);
+    border-radius: 16px;
+    padding: 16px 24px;
+    box-shadow: 0 12px 36px rgba(0, 0, 0, 0.18), 4px 4px 0px #18181b;
+    z-index: 9999;
+    transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+.cookie-banner.fade-out {
+    opacity: 0;
+    transform: translateX(-50%) translateY(20px);
+    pointer-events: none;
+}
+
+.cookie-icon-wrapper {
+    width: 44px;
+    height: 44px;
+    border-radius: 12px;
+    background: #eef2ff;
+    border: 2px solid #6366f1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.btn-doodle-secondary {
+    background: #f1f5f9;
+    color: #1e293b;
+    border: 2px solid #64748b;
+    border-radius: 20px;
+    padding: 6px 16px;
+    font-weight: 600;
+    font-size: 0.875rem;
+    cursor: pointer;
+    transition: all 0.15s ease;
+}
+
+.btn-doodle-secondary:hover {
+    background: #e2e8f0;
+    transform: translateY(-1px);
+}
+
+body.dark-theme .cookie-banner {
+    background: #1e1b4b;
+    border-color: #6366f1;
+    box-shadow: 0 12px 36px rgba(0, 0, 0, 0.45), 4px 4px 0px #6366f1;
+    color: #f8fafc;
+}
+
+body.dark-theme .cookie-icon-wrapper {
+    background: #312e81;
+    border-color: #818cf8;
+}
+
+body.dark-theme .btn-doodle-secondary {
+    background: #334155;
+    color: #f8fafc;
+    border-color: #94a3b8;
+}
+
+body.dark-theme .btn-doodle-secondary:hover {
+    background: #475569;
+}

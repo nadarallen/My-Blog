@@ -85,3 +85,16 @@ def test_authenticated_user_request_caching(client, app):
         assert g.current_user["username"] == "cacheuser"
 
 
+def test_force_https_redirection(app):
+    """Verify FORCE_HTTPS redirects HTTP requests with 301 to HTTPS."""
+    app.config["FORCE_HTTPS"] = True
+    try:
+        with app.test_client() as c:
+            res = c.get("/", headers={"X-Forwarded-Proto": "http"})
+            assert res.status_code == 301
+            assert res.location.startswith("https://")
+    finally:
+        app.config["FORCE_HTTPS"] = False
+
+
+

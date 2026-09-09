@@ -54,5 +54,32 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
     });
+
+    // ── Cookie Consent Management ─────────────────────────────────
+    const cookieBanner = document.getElementById('cookieConsentBanner');
+    const acceptBtn = document.getElementById('cookieAcceptBtn');
+    const essentialBtn = document.getElementById('cookieEssentialBtn');
+
+    if (cookieBanner) {
+        const consent = localStorage.getItem('myblog_cookie_consent');
+        if (!consent) {
+            cookieBanner.style.display = 'block';
+        }
+
+        const setConsent = (type) => {
+            localStorage.setItem('myblog_cookie_consent', type);
+            cookieBanner.classList.add('fade-out');
+            setTimeout(() => {
+                cookieBanner.style.display = 'none';
+            }, 300);
+        };
+
+        if (acceptBtn) {
+            acceptBtn.addEventListener('click', () => setConsent('all'));
+        }
+        if (essentialBtn) {
+            essentialBtn.addEventListener('click', () => setConsent('essential'));
+        }
+    }
 });
 

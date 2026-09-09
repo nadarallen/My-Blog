@@ -30,7 +30,7 @@
                     {% if post['image_url'] %}
                         <div class="current-image-preview mb-3 p-2 border-doodle text-center">
                             <p class="small text-muted mb-1">Current Image:</p>
-                            <img src="{{ post['image_url'] }}" style="max-height: 150px; object-fit: contain;" alt="Current Cover Image">
+                            <img src="{{ post['image_url'] }}" style="max-height: 150px; object-fit: contain;" alt="Current Cover Image for {{ post['title'] }}">
                         </div>
                     {% endif %}
                     

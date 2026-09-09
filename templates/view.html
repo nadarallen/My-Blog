@@ -1,6 +1,11 @@
 {% extends "base.html" %}
 
-{% block title %}{{ post.title }} — My-Blog{% endblock %}
+{% block title %}{{ post.seo_title or post.title }} — My-Blog{% endblock %}
+{% block meta_description %}{{ post.seo_description or post.excerpt or (post.content[:150] | striptags) }}{% endblock %}
+{% block og_title %}{{ post.seo_title or post.title }} — My-Blog{% endblock %}
+{% block og_description %}{{ post.seo_description or post.excerpt or (post.content[:150] | striptags) }}{% endblock %}
+{% block og_type %}article{% endblock %}
+{% block og_image %}{{ post.image_url if post.image_url else url_for('static', filename='social-preview.png', _external=True) }}{% endblock %}
 
 {% block extra_head %}
 <!-- Structured Data JSON-LD for SEO -->
@@ -85,7 +90,7 @@
             <!-- Cover Image -->
             {% if post.image_url %}
                 <div class="post-cover-container mb-4">
-                    <img src="{{ post.image_url }}" class="img-fluid rounded border-doodle" alt="{{ post.title }}">
+                    <img src="{{ post.image_url }}" class="img-fluid rounded border-doodle" alt="Cover illustration for {{ post.title }}">
                 </div>
             {% endif %}
 

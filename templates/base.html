@@ -4,6 +4,30 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}My Blog{% endblock %}</title>
+
+    <!-- Meta Description & SEO -->
+    <meta name="description" content="{% block meta_description %}{{ site_settings.site_description if site_settings and site_settings.site_description else 'A modern publishing platform built on AWS DynamoDB and Amazon S3 with cloud-native security and elegant doodle design.' }}{% endblock %}">
+    <link rel="sitemap" type="application/xml" title="Sitemap" href="{{ url_for('seo.sitemap') }}">
+    <link rel="alternate" type="application/rss+xml" title="RSS Feed" href="{{ url_for('seo.rss_feed') }}">
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/svg+xml" href="{{ url_for('static', filename='favicon.svg') }}">
+    <link rel="alternate icon" href="{{ url_for('static', filename='favicon.ico') }}">
+
+    <!-- Open Graph / Social Media Meta -->
+    <meta property="og:site_name" content="{{ site_settings.site_name if site_settings and site_settings.site_name else 'My-Blog' }}">
+    <meta property="og:title" content="{% block og_title %}{{ self.title() }}{% endblock %}">
+    <meta property="og:description" content="{% block og_description %}{{ self.meta_description() }}{% endblock %}">
+    <meta property="og:type" content="{% block og_type %}website{% endblock %}">
+    <meta property="og:url" content="{{ request.base_url }}">
+    <meta property="og:image" content="{% block og_image %}{{ url_for('static', filename='social-preview.png', _external=True) }}{% endblock %}">
+
+    <!-- Twitter Card Meta -->
+    <meta name="twitter:card" content="{% block twitter_card %}summary_large_image{% endblock %}">
+    <meta name="twitter:title" content="{% block twitter_title %}{{ self.og_title() }}{% endblock %}">
+    <meta name="twitter:description" content="{% block twitter_description %}{{ self.og_description() }}{% endblock %}">
+    <meta name="twitter:image" content="{% block twitter_image %}{{ self.og_image() }}{% endblock %}">
+
     <!-- Google Fonts: Outfit & Caveat for premium hand-drawn look -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -115,12 +139,33 @@
         <div class="container text-center">
             <p class="mb-1">© 2026 My-Blog Platform. Production-grade AWS DynamoDB & S3 architecture.</p>
             <p class="small text-muted mb-0">
-                <a href="{{ url_for('seo.sitemap') }}" class="text-muted text-decoration-none me-2">Sitemap</a> |
+                <a href="{{ url_for('seo.privacy_policy') }}" class="text-muted text-decoration-none me-2">Privacy Policy</a> |
+                <a href="{{ url_for('seo.terms_of_service') }}" class="text-muted text-decoration-none mx-2">Terms &amp; Conditions</a> |
+                <a href="{{ url_for('seo.sitemap') }}" class="text-muted text-decoration-none mx-2">Sitemap</a> |
                 <a href="{{ url_for('seo.rss_feed') }}" class="text-muted text-decoration-none mx-2">RSS Feed</a> |
                 <a href="{{ url_for('api.api_docs') }}" class="text-muted text-decoration-none ms-2">API Docs</a>
             </p>
         </div>
     </footer>
+
+    <!-- Cookie Consent Banner -->
+    <aside id="cookieConsentBanner" class="cookie-banner" role="region" aria-label="Cookie consent" style="display: none;">
+        <div class="container d-flex flex-column flex-md-row align-items-md-center justify-content-between gap-3">
+            <div class="d-flex align-items-center gap-3">
+                <div class="cookie-icon-wrapper">
+                    <svg class="icon-svg icon-md text-primary" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><path d="M12 2a10 10 0 1 0 10 10 4 4 0 0 1-5-5 4 4 0 0 1-5-5z"></path><circle cx="8.5" cy="8.5" r="1"></circle><circle cx="15.5" cy="15.5" r="1"></circle><circle cx="12" cy="12" r="1"></circle></svg>
+                </div>
+                <div class="cookie-text">
+                    <span class="fw-semibold">We value your privacy.</span>
+                    <span class="text-muted small d-block">We use essential cookies for secure authentication and local storage for your theme preference. See our <a href="{{ url_for('seo.privacy_policy') }}" class="text-decoration-underline">Privacy Policy</a>.</span>
+                </div>
+            </div>
+            <div class="d-flex align-items-center gap-2 flex-wrap">
+                <button type="button" id="cookieEssentialBtn" class="btn-doodle-secondary btn-sm">Essential Only</button>
+                <button type="button" id="cookieAcceptBtn" class="btn-doodle-primary btn-sm">Accept All</button>
+            </div>
+        </div>
+    </aside>
 
     <!-- Bootstrap Bundle JS & Theme JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>

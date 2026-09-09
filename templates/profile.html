@@ -10,7 +10,7 @@
                 <div class="d-flex align-items-center mb-3 mb-md-0">
                     <div class="avatar-circle-lg me-3">
                         {% if profile_user.avatar_url %}
-                            <img src="{{ profile_user.avatar_url }}" class="rounded-circle img-fluid" style="width:70px; height:70px; object-fit:cover;" alt="Avatar">
+                            <img src="{{ profile_user.avatar_url }}" class="rounded-circle img-fluid" style="width:70px; height:70px; object-fit:cover;" alt="{{ profile_user.display_name or profile_user.username }}'s profile avatar">
                         {% else %}
                             {{ profile_user.username[:2].upper() }}
                         {% endif %}
