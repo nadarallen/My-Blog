@@ -14,4 +14,6 @@ if __name__ == "__main__":
     # Production uses: gunicorn wsgi:app
     import os
     debug = os.environ.get("FLASK_DEBUG", "false").lower() == "true"
-    app.run(host="0.0.0.0", port=5000, debug=debug)
+    use_reloader = os.environ.get("FLASK_USE_RELOADER", "false").lower() == "true"
+    port = int(os.environ.get("PORT", 5000))
+    app.run(host="0.0.0.0", port=port, debug=debug, use_reloader=use_reloader)
