@@ -135,3 +135,54 @@ def test_image_compression_resizing():
     assert out_img.width <= 1920
     assert out_img.height <= 1080
 
+
+def test_custom_404_page(client):
+    res = client.get("/nonexistent-page-xyz")
+    assert res.status_code == 404
+    assert b"Lost in the Ink" in res.data
+    assert b"Back to Home" in res.data
+    assert b"Explore Topics" in res.data
+
+
+def test_registration_honeypot_spam_trap(client, app):
+    res = client.post(
+        "/register",
+        data={
+            "username": "bot_user",
+            "password": "BotPassword123!",
+            "confirm_password": "BotPassword123!",
+            "hp_website": "http://spamsite.com",
+        },
+        follow_redirects=True,
+    )
+    assert res.status_code == 200
+    # Confirm bot_user was NOT actually created in DynamoDB
+    user = app.user_model.get_by_username("bot_user")
+    assert user is None
+
+
+def test_comment_honeypot_spam_trap(client, app):
+    register_user(client, username="honeypot_tester", password="Pass1234")
+    login_user(client, username="honeypot_tester", password="Pass1234")
+    post_res = create_post(client, title="Honeypot Post", content="Testing comment spam")
+    post_id = get_post_id_from_redirect(post_res)
+
+    res = client.post(
+        f"/comments/add/{post_id}",
+        data={
+            "content": "Cheap pills online!",
+            "hp_website": "http://spam-link.com",
+        },
+        follow_redirects=True,
+    )
+    assert res.status_code == 200
+    comments = app.comment_model.get_by_post(post_id)
+    assert len(comments) == 0
+
+
+def test_homepage_cta_and_category_links(client, app):
+    res = client.get("/")
+    assert res.status_code == 200
+    assert b"Get Started for Free" in res.data or b"Write a Story" in res.data
+
+

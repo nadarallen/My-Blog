@@ -51,6 +51,12 @@ def register():
         password = request.form.get("password", "")
         confirm = request.form.get("confirm_password", "")
 
+        # Honeypot spam bot trap (invisible field filled by automated bots)
+        if request.form.get("hp_website"):
+            current_app.logger.warning("Spam registration bot trapped from %s", request.remote_addr)
+            flash("Account created! You can now sign in.", "success")
+            return redirect(url_for("auth.login"))
+
         # Normalise: lowercase + strip whitespace
         username = raw_username.strip().lower()
 

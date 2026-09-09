@@ -81,5 +81,58 @@ document.addEventListener('DOMContentLoaded', () => {
             essentialBtn.addEventListener('click', () => setConsent('essential'));
         }
     }
+
+    // ── Live Form Validation & Feedback ───────────────────────────
+    const regPassword = document.getElementById('password');
+    const regConfirm = document.getElementById('confirm_password');
+    const matchMsg = document.getElementById('passwordMatchMessage');
+
+    if (regPassword && regConfirm && matchMsg) {
+        const checkMatch = () => {
+            const p1 = regPassword.value;
+            const p2 = regConfirm.value;
+            if (!p2) {
+                matchMsg.classList.add('d-none');
+                return;
+            }
+            matchMsg.classList.remove('d-none');
+            if (p1 === p2) {
+                matchMsg.textContent = '✓ Passwords match';
+                matchMsg.className = 'small mt-1 text-success fw-bold';
+            } else {
+                matchMsg.textContent = '✗ Passwords do not match';
+                matchMsg.className = 'small mt-1 text-danger fw-bold';
+            }
+        };
+        regPassword.addEventListener('input', checkMatch);
+        regConfirm.addEventListener('input', checkMatch);
+    }
+
+    // File upload size check (5 MB limit)
+    const imageInputs = document.querySelectorAll('input[type="file"][accept*="image"]');
+    imageInputs.forEach(input => {
+        input.addEventListener('change', function () {
+            if (this.files && this.files[0]) {
+                const sizeMB = this.files[0].size / (1024 * 1024);
+                if (sizeMB > 5) {
+                    alert(`Selected image is ${sizeMB.toFixed(1)} MB, which exceeds the 5 MB limit. Please select a smaller file.`);
+                    this.value = '';
+                }
+            }
+        });
+    });
+
+    // ── Native Privacy-First Analytics ───────────────────────────
+    try {
+        const consent = localStorage.getItem('myblog_cookie_consent');
+        if (consent !== 'essential') {
+            window.addEventListener('load', () => {
+                const nav = performance.getEntriesByType('navigation')[0];
+                if (nav && nav.duration) {
+                    console.info(`[My-Blog Analytics] Page loaded in ${Math.round(nav.duration)}ms (DOM Complete: ${Math.round(nav.domComplete)}ms)`);
+                }
+            });
+        }
+    } catch (e) {}
 });
 

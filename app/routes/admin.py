@@ -122,12 +122,14 @@ def manage_settings():
     if request.method == "POST":
         site_name = request.form.get("site_name", "My-Blog Platform")
         site_description = request.form.get("site_description", "")
+        analytics_id = request.form.get("analytics_id", "").strip()
         allow_reg = "allow_registration" in request.form
         allow_comm = "allow_comments" in request.form
 
         new_settings = {
             "site_name": site_name,
             "site_description": site_description,
+            "analytics_id": analytics_id,
             "allow_registration": allow_reg,
             "allow_comments": allow_comm,
         }

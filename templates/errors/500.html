@@ -1,22 +1,36 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>500 — Server Error</title>
-    <link href="{{ url_for('static', filename='style.css') }}" rel="stylesheet">
-</head>
-<body>
-    <div style="text-align:center; padding: 4rem 2rem; font-family: 'Outfit', sans-serif;">
-        <h1 style="font-size:6rem; margin:0;">500</h1>
-        <h2>Something Went Wrong</h2>
-        <p>An internal error occurred. Our team has been notified.</p>
-        <a href="{{ url_for('posts.index') }}" style="
-            display:inline-block; padding:.75rem 2rem;
-            border:2px solid #000; background:#000; color:#fff;
-            text-decoration:none; font-weight:600; margin-top:1rem;">
-            ← Back to Home
-        </a>
+{% extends "base.html" %}
+
+{% block title %}500 — Server Error — My-Blog{% endblock %}
+{% block meta_description %}An unexpected server error occurred. Our team has been alerted.{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center py-4">
+    <div class="col-md-8 col-lg-6 text-center">
+        <div class="card-doodle p-4 p-md-5">
+            <div class="doodle-error-graphic mb-4">
+                <svg width="120" height="120" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="text-danger mx-auto">
+                    <circle cx="12" cy="12" r="10"></circle>
+                    <line x1="12" y1="8" x2="12" y2="12"></line>
+                    <line x1="12" y1="16" x2="12.01" y2="16"></line>
+                </svg>
+            </div>
+
+            <h1 class="display-3 fw-bold mb-2 font-hand text-danger">500</h1>
+            <h2 class="h3 mb-3">Something Went Awry</h2>
+            <p class="text-muted mb-4">
+                Our servers hit an unexpected bump in the road. Our engineering logging has captured the incident and we are looking into it.
+            </p>
+
+            <div class="d-flex align-items-center justify-content-center gap-3 flex-wrap">
+                <a href="{{ url_for('posts.index') }}" class="btn-doodle d-inline-flex align-items-center gap-2">
+                    <svg class="icon-svg icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
+                    <span>Back to Safety</span>
+                </a>
+                <a href="{{ url_for('api.health') }}" class="btn-doodle-secondary">
+                    <span>Check System Health</span>
+                </a>
+            </div>
+        </div>
     </div>
-</body>
-</html>
+</div>
+{% endblock %}

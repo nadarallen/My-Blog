@@ -8,27 +8,31 @@
         <div class="form-card-container">
             <h2 class="form-title text-center mb-4">Start Writing</h2>
             
-            <form method="POST" class="doodle-form">
+            <form method="POST" class="doodle-form" id="registerForm">
                 <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
                 
+                <!-- Anti-Spam Honeypot (hidden from real users, traps bots) -->
+                <input type="text" name="hp_website" class="d-none" tabindex="-1" autocomplete="off" aria-hidden="true">
+
                 <!-- Username -->
                 <div class="form-group mb-4">
                     <label for="username" class="form-label-custom">Username</label>
-                    <input type="text" id="username" name="username" required value="{{ username or '' }}" placeholder="Pick a username..." class="form-input-custom" autocomplete="username">
+                    <input type="text" id="username" name="username" required value="{{ username or '' }}" placeholder="Pick a username..." class="form-input-custom" autocomplete="username" minlength="3" maxlength="32" pattern="^[a-zA-Z0-9_]{3,32}$" title="3 to 32 characters: letters, numbers, and underscores only.">
                     <div class="form-text text-muted small">3 to 32 chars. Letters, digits and underscores only.</div>
                 </div>
 
                 <!-- Password -->
                 <div class="form-group mb-4">
                     <label for="password" class="form-label-custom">Password</label>
-                    <input type="password" id="password" name="password" required placeholder="Choose a strong password..." class="form-input-custom" autocomplete="new-password">
+                    <input type="password" id="password" name="password" required placeholder="Choose a strong password..." class="form-input-custom" autocomplete="new-password" minlength="8" maxlength="72">
                     <div class="form-text text-muted small">At least 8 chars, 1 letter, and 1 digit. Max 72 chars.</div>
                 </div>
 
                 <!-- Confirm Password -->
                 <div class="form-group mb-4">
                     <label for="confirm_password" class="form-label-custom">Confirm Password</label>
-                    <input type="password" id="confirm_password" name="confirm_password" required placeholder="Re-enter password..." class="form-input-custom" autocomplete="new-password">
+                    <input type="password" id="confirm_password" name="confirm_password" required placeholder="Re-enter password..." class="form-input-custom" autocomplete="new-password" minlength="8" maxlength="72">
+                    <div id="passwordMatchMessage" class="small mt-1 d-none"></div>
                 </div>
 
                 <!-- Action Button -->

@@ -37,6 +37,18 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <!-- Main Custom CSS -->
     <link href="{{ url_for('static', filename='style.css') }}" rel="stylesheet">
+
+    {% if site_settings and site_settings.analytics_id and site_settings.analytics_id.startswith('G-') %}
+        <!-- Google Analytics 4 tag (conditional) -->
+        <script async src="https://www.googletagmanager.com/gtag/js?id={{ site_settings.analytics_id }}"></script>
+        <script>
+          window.dataLayer = window.dataLayer || [];
+          function gtag(){dataLayer.push(arguments);}
+          gtag('js', new Date());
+          gtag('config', '{{ site_settings.analytics_id }}');
+        </script>
+    {% endif %}
+
     {% block extra_head %}{% endblock %}
 </head>
 <body>

@@ -124,11 +124,12 @@
             {% if 'username' in session %}
                 <form method="POST" action="{{ url_for('comments.add_comment', post_id=post.post_id) }}" class="reddit-composer">
                     <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                    <input type="text" name="hp_website" class="d-none" tabindex="-1" autocomplete="off" aria-hidden="true">
                     <div class="reddit-composer-header">
                         <span class="avatar-circle-sm me-1">{{ session['username'][:2].upper() }}</span>
                         <span>Comment as <a href="{{ url_for('auth.author_profile', username=session['username']) }}" class="text-dark fw-bold">u/{{ session['username'] }}</a></span>
                     </div>
-                    <textarea name="content" class="reddit-composer-textarea" rows="3" placeholder="What are your thoughts? (@mention users to notify them)" required></textarea>
+                    <textarea name="content" class="reddit-composer-textarea" rows="3" placeholder="What are your thoughts? (@mention users to notify them)" required maxlength="5000"></textarea>
                     <div class="reddit-composer-footer">
                         <small class="text-muted">Markdown formatting supported</small>
                         <button type="submit" class="reddit-btn-comment">Comment</button>

@@ -25,8 +25,17 @@ def add_comment(post_id):
     except (ValueError, TypeError):
         depth = 0
 
+    # Honeypot spam bot trap
+    if request.form.get("hp_website"):
+        current_app.logger.warning("Spam comment bot trapped from %s on post %s", request.remote_addr, post_id)
+        return _safe_referrer_redirect("posts.view_post", post_id=post_id)
+
     if not content:
         flash("Comment content cannot be empty.", "warning")
+        return _safe_referrer_redirect("posts.view_post", post_id=post_id)
+
+    if len(content) > 5000:
+        flash("Comment must be 5,000 characters or less.", "warning")
         return _safe_referrer_redirect("posts.view_post", post_id=post_id)
 
     post = current_app.post_model.get_by_id_no_increment(post_id)

@@ -41,6 +41,12 @@
                     <textarea class="form-control form-control-doodle" id="site_description" name="site_description" rows="2">{{ settings.site_description or '' }}</textarea>
                 </div>
 
+                <div class="mb-3">
+                    <label for="analytics_id" class="form-label font-weight-bold">Analytics Measurement ID (Optional)</label>
+                    <input type="text" class="form-control form-control-doodle" id="analytics_id" name="analytics_id" value="{{ settings.analytics_id or '' }}" placeholder="e.g. G-XXXXXXXXXX">
+                    <div class="form-text text-muted small">Optional Google Analytics 4 Measurement ID or tracking identifier.</div>
+                </div>
+
                 <div class="form-check form-switch mb-3">
                     <input class="form-check-input" type="checkbox" id="allow_registration" name="allow_registration" {% if settings.allow_registration %}checked{% endif %}>
                     <label class="form-check-label font-weight-bold" for="allow_registration">Allow New User Registrations</label>
