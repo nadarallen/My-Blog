@@ -186,3 +186,29 @@ def test_homepage_cta_and_category_links(client, app):
     assert b"Get Started for Free" in res.data or b"Write a Story" in res.data
 
 
+def test_preferred_sources_badge(client, app):
+    # Test homepage contains preferred source badge and modal
+    res = client.get("/")
+    assert res.status_code == 200
+    assert b"Preferred Source" in res.data
+    assert b"preferredSourceModal" in res.data
+    assert b"preferred-source-badge" in res.data
+
+    # Test post view contains preferred source badge (large)
+    register_user(client, username="verified_author", password="Pass1234")
+    login_user(client, username="verified_author", password="Pass1234")
+    post_res = create_post(client, title="Verified Source Post", content="High quality reporting and analysis.")
+    post_id = get_post_id_from_redirect(post_res)
+
+    res_post = client.get(f"/post/{post_id}")
+    assert res_post.status_code == 200
+    assert b"preferred-source-badge-lg" in res_post.data
+    assert b"Preferred Source" in res_post.data
+
+    # Test author profile contains preferred source badge
+    res_profile = client.get("/author/verified_author")
+    assert res_profile.status_code == 200
+    assert b"preferred-source-badge" in res_profile.data
+
+
+

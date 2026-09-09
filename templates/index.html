@@ -100,9 +100,17 @@
                 </div>
 
                 <div class="pin-body">
-                    {% if post.get('category_slug') %}
-                        <a href="{{ url_for('taxonomy.category_view', slug=post['category_slug']) }}" class="pin-category-badge">{{ post['category_slug'] | title }}</a>
-                    {% endif %}
+                    <div class="d-flex align-items-center justify-content-between mb-2 flex-wrap gap-1">
+                        {% if post.get('category_slug') %}
+                            <a href="{{ url_for('taxonomy.category_view', slug=post['category_slug']) }}" class="pin-category-badge mb-0">{{ post['category_slug'] | title }}</a>
+                        {% else %}
+                            <span></span>
+                        {% endif %}
+                        <span class="preferred-source-badge" data-bs-toggle="modal" data-bs-target="#preferredSourceModal" role="button" title="Preferred Source · Verified Publication">
+                            <svg class="preferred-source-icon" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.4 4.8 5.3.8-3.8 3.7.9 5.3L12 16.1l-4.8 2.5.9-5.3-3.8-3.7 5.3-.8L12 2z"/></svg>
+                            Preferred Source
+                        </span>
+                    </div>
 
                     <h3 class="pin-title">
                         <a href="{{ url_for('posts.view_post', post_id=post['post_id']) }}">{{ post['title'] }}</a>

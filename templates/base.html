@@ -147,8 +147,16 @@
     </main>
 
     <!-- Footer -->
+    <!-- Footer -->
     <footer class="doodle-footer py-4 mt-5">
         <div class="container text-center">
+            <div class="d-flex align-items-center justify-content-center gap-2 mb-2 flex-wrap">
+                <span class="preferred-source-badge" data-bs-toggle="modal" data-bs-target="#preferredSourceModal" role="button" title="Preferred Source · Verified Publication">
+                    <svg class="preferred-source-icon" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.4 4.8 5.3.8-3.8 3.7.9 5.3L12 16.1l-4.8 2.5.9-5.3-3.8-3.7 5.3-.8L12 2z"/></svg>
+                    Preferred Source
+                </span>
+                <span class="small text-muted">Independent Publication</span>
+            </div>
             <p class="mb-1">© 2026 My-Blog Platform. Production-grade AWS DynamoDB & S3 architecture.</p>
             <p class="small text-muted mb-0">
                 <a href="{{ url_for('seo.privacy_policy') }}" class="text-muted text-decoration-none me-2">Privacy Policy</a> |
@@ -159,6 +167,49 @@
             </p>
         </div>
     </footer>
+
+    <!-- Preferred Source Verification Modal -->
+    <div class="modal fade modal-doodle" id="preferredSourceModal" tabindex="-1" aria-labelledby="preferredSourceModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content p-3 p-md-4">
+                <div class="modal-header border-0 pb-0">
+                    <button type="button" class="btn-doodle-close ms-auto" data-bs-dismiss="modal" aria-label="Close">×</button>
+                </div>
+                <div class="modal-body text-center pt-0">
+                    <div class="trust-badge-circle">
+                        <svg class="icon-svg icon-lg text-warning" width="32" height="32" viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M12 2l2.4 4.8 5.3.8-3.8 3.7.9 5.3L12 16.1l-4.8 2.5.9-5.3-3.8-3.7 5.3-.8L12 2z"/>
+                        </svg>
+                    </div>
+                    <h3 class="modal-title h4 mb-2" id="preferredSourceModalLabel">Verified Preferred Source</h3>
+                    <p class="text-muted small mb-4">
+                        This badge certifies that <strong>My-Blog</strong> is an editorially verified, independent publication providing original reporting, peer-reviewed engineering content, and transparent authorship.
+                    </p>
+                    <div class="p-3 bg-light rounded-3 text-start mb-4 border border-secondary border-opacity-25">
+                        <div class="d-flex align-items-center mb-2">
+                            <svg class="icon-svg icon-xs icon-check-green me-2" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                            <span class="small fw-semibold">Original Tech &amp; Design Architecture</span>
+                        </div>
+                        <div class="d-flex align-items-center mb-2">
+                            <svg class="icon-svg icon-xs icon-check-green me-2" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                            <span class="small fw-semibold">Zero-Spam &amp; Privacy-First Standards</span>
+                        </div>
+                        <div class="d-flex align-items-center">
+                            <svg class="icon-svg icon-xs icon-check-green me-2" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                            <span class="small fw-semibold">Standard RSS 2.0 Syndication Feed</span>
+                        </div>
+                    </div>
+                    <div class="d-flex justify-content-center gap-2 flex-wrap">
+                        <a href="{{ url_for('seo.rss_feed') }}" target="_blank" class="btn btn-doodle-primary btn-sm">
+                            <svg class="icon-svg icon-xs me-1" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 11a9 9 0 0 1 9 9"></path><path d="M4 4a16 16 0 0 1 16 16"></path><circle cx="5" cy="19" r="1"></circle></svg>
+                            Subscribe to RSS Feed
+                        </a>
+                        <button type="button" class="btn btn-doodle-secondary btn-sm" data-bs-dismiss="modal">Close</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 
     <!-- Cookie Consent Banner -->
     <aside id="cookieConsentBanner" class="cookie-banner" role="region" aria-label="Cookie consent" style="display: none;">

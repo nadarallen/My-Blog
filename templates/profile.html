@@ -17,7 +17,14 @@
                     </div>
                     <div>
                         <h2 class="mb-0">{{ profile_user.display_name or profile_user.username }}</h2>
-                        <div class="text-muted">@{{ profile_user.username }} · <span class="badge bg-secondary">{{ profile_user.role | title }}</span></div>
+                        <div class="text-muted d-flex align-items-center gap-2 flex-wrap mt-1">
+                            <span>@{{ profile_user.username }}</span> · 
+                            <span class="badge bg-secondary">{{ profile_user.role | title }}</span> ·
+                            <span class="preferred-source-badge" data-bs-toggle="modal" data-bs-target="#preferredSourceModal" role="button" title="Preferred Source · Verified Publication Author">
+                                <svg class="preferred-source-icon" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.4 4.8 5.3.8-3.8 3.7.9 5.3L12 16.1l-4.8 2.5.9-5.3-3.8-3.7 5.3-.8L12 2z"/></svg>
+                                Preferred Source
+                            </span>
+                        </div>
                         {% if profile_user.bio %}<p class="mt-2 mb-0">{{ profile_user.bio }}</p>{% endif %}
                         {% if profile_user.location %}<small class="text-muted d-inline-flex align-items-center mt-1"><svg class="icon-svg icon-xs me-1" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>{{ profile_user.location }}</small>{% endif %}
                     </div>

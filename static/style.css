@@ -1604,4 +1604,109 @@ body.dark-theme .btn-doodle-secondary {
 
 body.dark-theme .btn-doodle-secondary:hover {
     background: #475569;
+}
+
+/* ── Preferred Sources Badge ────────────────────────────────── */
+.preferred-source-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 0.72rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    padding: 3px 10px;
+    border-radius: 20px;
+    background: rgba(245, 158, 11, 0.12);
+    color: #b45309;
+    border: 1.5px solid #d97706;
+    box-shadow: 1.5px 1.5px 0px #b45309;
+    cursor: pointer;
+    text-decoration: none;
+    transition: all 0.15s ease;
+    user-select: none;
+}
+
+.preferred-source-badge:hover {
+    transform: translateY(-1px) scale(1.03);
+    box-shadow: 2.5px 2.5px 0px #b45309;
+    background: rgba(245, 158, 11, 0.2);
+    color: #92400e;
+}
+
+.preferred-source-badge-lg {
+    font-size: 0.8rem;
+    padding: 5px 12px;
+    gap: 6px;
+    box-shadow: 2px 2px 0px #b45309;
+}
+
+.preferred-source-icon {
+    width: 14px;
+    height: 14px;
+    color: #d97706;
+    flex-shrink: 0;
+    transition: transform 0.2s ease;
+}
+
+.preferred-source-badge:hover .preferred-source-icon {
+    transform: rotate(15deg) scale(1.15);
+}
+
+body.dark-theme .preferred-source-badge {
+    background: rgba(251, 191, 36, 0.14);
+    color: #fde047;
+    border-color: #fbbf24;
+    box-shadow: 1.5px 1.5px 0px #fbbf24;
+}
+
+body.dark-theme .preferred-source-badge:hover {
+    background: rgba(251, 191, 36, 0.24);
+    color: #fef08a;
+    box-shadow: 2.5px 2.5px 0px #fbbf24;
+}
+
+body.dark-theme .preferred-source-icon {
+    color: #fde047;
+}
+
+/* Preferred Source Trust Modal */
+.modal-doodle .modal-content {
+    background: var(--bg-cream, #faf9f6);
+    border: 3px solid var(--border-color, #18181b);
+    border-radius: 20px;
+    box-shadow: 6px 6px 0px var(--border-color, #18181b);
+    color: var(--text-primary, #0f172a);
+}
+
+body.dark-theme .modal-doodle .modal-content {
+    background: #1e1b4b;
+    border-color: #818cf8;
+    box-shadow: 6px 6px 0px #6366f1;
+    color: #f8fafc;
+}
+
+.trust-badge-circle {
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    background: rgba(245, 158, 11, 0.15);
+    border: 2px solid #d97706;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 16px auto;
+}
+
+body.dark-theme .trust-badge-circle {
+    background: rgba(251, 191, 36, 0.2);
+    border-color: #fbbf24;
+}
+
+.icon-check-green {
+    color: #16a34a;
+}
+
+body.dark-theme .icon-check-green {
+    color: #4ade80;
 }

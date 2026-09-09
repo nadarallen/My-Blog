@@ -17,6 +17,13 @@
                 <div class="col-md-6 mb-4">
                     <div class="card-doodle p-3 h-100 d-flex flex-column justify-content-between">
                         <div>
+                            <div class="d-flex align-items-center justify-content-between mb-2">
+                                <span class="badge bg-secondary">{{ category.name }}</span>
+                                <span class="preferred-source-badge" data-bs-toggle="modal" data-bs-target="#preferredSourceModal" role="button" title="Preferred Source · Verified Publication">
+                                    <svg class="preferred-source-icon" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.4 4.8 5.3.8-3.8 3.7.9 5.3L12 16.1l-4.8 2.5.9-5.3-3.8-3.7 5.3-.8L12 2z"/></svg>
+                                    Preferred Source
+                                </span>
+                            </div>
                             <h5><a href="{{ url_for('posts.view_post', post_id=post.post_id) }}" class="text-dark text-decoration-none">{{ post.title }}</a></h5>
                             <p class="text-muted small">{{ post.excerpt or post.content[:100] }}...</p>
                         </div>

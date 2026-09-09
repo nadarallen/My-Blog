@@ -30,8 +30,14 @@
         <article class="card-doodle p-4 mb-4">
             <!-- Post Header -->
             <header class="post-header mb-4">
-                <div class="d-flex align-items-center justify-content-between mb-2">
-                    <span class="badge bg-secondary rounded-pill px-3 py-1">{{ post.category_slug | title }}</span>
+                <div class="d-flex align-items-center justify-content-between mb-2 flex-wrap gap-2">
+                    <div class="d-flex align-items-center gap-2 flex-wrap">
+                        <span class="badge bg-secondary rounded-pill px-3 py-1">{{ post.category_slug | title }}</span>
+                        <span class="preferred-source-badge preferred-source-badge-lg" data-bs-toggle="modal" data-bs-target="#preferredSourceModal" role="button" title="Preferred Source · Verified Publication">
+                            <svg class="preferred-source-icon" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.4 4.8 5.3.8-3.8 3.7.9 5.3L12 16.1l-4.8 2.5.9-5.3-3.8-3.7 5.3-.8L12 2z"/></svg>
+                            Preferred Source
+                        </span>
+                    </div>
                     <span class="text-muted small d-inline-flex align-items-center">
                         <svg class="icon-svg icon-xs me-1" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
                         {{ post.read_time }} min read
