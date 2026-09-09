@@ -1,50 +1,115 @@
-# Python
+# ==============================================================================
+# My-Blog Git Ignore Configuration
+# ==============================================================================
+
+# --- Python & Bytecode ---
 __pycache__/
 *.py[cod]
-*.pyo
-*.pyd
+*$py.class
 *.so
 *.egg
 *.egg-info/
 dist/
 build/
+develop-eggs/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.manifest
+*.spec
 
-# Virtual environments
+# --- Virtual Environments ---
 venv/
 env/
+ENV/
 .venv/
-.env
+env.bak/
+venv.bak/
 
-# Production secrets — NEVER commit these
-.env.production
+# --- Environment Variables & Secrets (CRITICAL: Never commit credentials) ---
+.env
 .env.local
 .env.*.local
+.env.production
+*.pem
+*.key
+*.cert
+*.crt
+secrets.json
+credentials.json
+# Allow committed template/example files:
+!*.env.example
+!.env.production.example
 
-# User uploads (stored in Docker volume on server)
-static/uploads/
+# --- Testing, Coverage & QA ---
+.pytest_cache/
+.hypothesis/
+.tox/
+.nox/
+.coverage
+.coverage.*
+nosetests.xml
+coverage.xml
+htmlcov/
+.mutmut-cache/
 
-# OS artifacts
+# --- Logs & Runtime Artifacts ---
+logs/
+*.log
+*.sqlite
+*.sqlite3
+*.db
+
+# --- User Uploads (Managed by S3 in production / persistent volume) ---
+static/uploads/*
+!static/uploads/.gitkeep
+
+# --- Operating System & Editor Artifacts ---
 .DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
 Thumbs.db
+desktop.ini
 
-# Editor
+# --- IDEs & Text Editors ---
 .vscode/
 .idea/
 *.swp
 *.swo
+*~
+*.sublime-project
+*.sublime-workspace
+.project
+.pydevproject
+.settings/
 
-# Pytest and coverage
-.pytest_cache/
-.coverage
-htmlcov/
-
-# Local logs
-logs/
-*.log
-
-# Terraform
+# --- Infrastructure & Terraform ---
 .terraform/
 *.tfstate
 *.tfstate.*
-*.exe
+crash.log
+override.tf
+override.tf.json
+*_override.tf
+*_override.tf.json
+.terraform.tfstate.lock.info
 
+# --- Executables & Binaries ---
+*.exe
+*.bin
+*.dll
+
+# --- Local Agent, Notes & Scratchpads ---
+Agent.MD
+agent.md
+*.bak
+scratch/
