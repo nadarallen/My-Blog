@@ -144,6 +144,28 @@ def is_safe_redirect_url(url: str, host: str) -> bool:
     return False
 
 
+def is_valid_external_url(url: str) -> bool:
+    """
+    Validate that a URL uses strictly http:// or https:// with a valid network location.
+    Rejects javascript:, data:, vbscript:, control characters, or relative links.
+    Returns True if empty (optional field) or a valid HTTP/HTTPS URL.
+    """
+    if not url:
+        return True
+    url = url.strip()
+    if any(c in url for c in ("\r", "\n", "\t", " ")):
+        return False
+    lower_url = url.lower()
+    if lower_url.startswith(("javascript:", "data:", "vbscript:", "file:", "about:")):
+        return False
+    parsed = urlparse(url)
+    if parsed.scheme not in ("http", "https"):
+        return False
+    if not parsed.netloc:
+        return False
+    return True
+
+
 # ──────────────────────────────────────────────────────────────────
 # Username Validation
 # ──────────────────────────────────────────────────────────────────

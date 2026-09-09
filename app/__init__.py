@@ -223,13 +223,19 @@ def create_app(config_name: str = "production") -> Flask:
                     if request.endpoint not in ("auth.login", "auth.register", "posts.index"):
                         flash("Your session has expired. Please sign in again.", "warning")
                         return redirect(url_for("auth.login"))
+                else:
+                    admin_username = app.config.get("ADMIN_USERNAME", "admin")
+                    if session["username"].lower() == admin_username.lower():
+                        session["role"] = "admin"
+                    else:
+                        session["role"] = user.get("role", "user")
                 g.current_user = user
 
     # ── Production Security Headers Middleware ───────────────────
     @app.after_request
     def set_security_headers(response):
         response.headers["X-Content-Type-Options"] = "nosniff"
-        response.headers["X-Frame-Options"] = "SAMEORIGIN"
+        response.headers["X-Frame-Options"] = "DENY"
         response.headers["Referrer-Policy"] = "strict-origin-when-cross-origin"
         response.headers["Permissions-Policy"] = "geolocation=(), camera=(), microphone=()"
         response.headers["Content-Security-Policy"] = (
@@ -241,6 +247,11 @@ def create_app(config_name: str = "production") -> Flask:
             "connect-src 'self' https://www.google-analytics.com https://*.analytics.google.com https://*.googletagmanager.com; "
             "frame-ancestors 'none';"
         )
+        # Enforce HSTS when request is over HTTPS or FORCE_HTTPS is enabled
+        from flask import request
+        if app.config.get("FORCE_HTTPS") or request.is_secure or request.headers.get("X-Forwarded-Proto") == "https":
+            response.headers["Strict-Transport-Security"] = "max-age=31536000; includeSubDomains"
+
         return response
 
     # ── Error handlers ───────────────────────────────────────────
@@ -332,9 +343,10 @@ def _seed_local_mock_data(app: Flask) -> None:
     """Seed initial sample blog posts, categories, and admin user for local preview."""
     admin_user = app.config.get("ADMIN_USERNAME", "admin")
     if not app.user_model.exists(admin_user):
+        initial_pwd = os.environ.get("ADMIN_INITIAL_PASSWORD", "AdminPassword123!")
         app.user_model.create(
             username=admin_user,
-            password="AdminPassword123!",
+            password=initial_pwd,
             email="admin@myblog.local",
             role="admin",
             display_name="Admin Author",

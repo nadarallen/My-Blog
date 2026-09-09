@@ -48,15 +48,27 @@ def update_user_role(username):
         flash(f"Invalid role '{role}'. Allowed: {', '.join(sorted(ALLOWED_ROLES))}", "danger")
         return redirect(url_for("admin.manage_users"))
 
-    current_app.user_model.update_role(username, role)
+    target_username = username.strip().lower()
+    admin_config_user = (current_app.config.get("ADMIN_USERNAME", "admin") or "admin").strip().lower()
+    current_user = session.get("username", "").strip().lower()
+
+    if target_username == admin_config_user and role != "admin":
+        flash("Cannot demote the primary administrator account.", "danger")
+        return redirect(url_for("admin.manage_users"))
+
+    if target_username == current_user and role != "admin":
+        flash("You cannot demote your own account from administrator.", "danger")
+        return redirect(url_for("admin.manage_users"))
+
+    current_app.user_model.update_role(target_username, role)
     current_app.audit_model.log_action(
         actor=session["username"],
         action="UPDATE_USER_ROLE",
-        target=username,
+        target=target_username,
         metadata={"new_role": role},
         ip_address=request.remote_addr or "",
     )
-    flash(f"Updated role for {username} to {role}.", "success")
+    flash(f"Updated role for {target_username} to {role}.", "success")
     return redirect(url_for("admin.manage_users"))
 
 
@@ -68,15 +80,34 @@ def update_user_status(username):
         flash(f"Invalid status '{status}'. Allowed: {', '.join(sorted(ALLOWED_STATUSES))}", "danger")
         return redirect(url_for("admin.manage_users"))
 
-    current_app.user_model.update_status(username, status)
+    target_username = username.strip().lower()
+    admin_config_user = (current_app.config.get("ADMIN_USERNAME", "admin") or "admin").strip().lower()
+    current_user = session.get("username", "").strip().lower()
+    actor_role = session.get("role", "user")
+
+    if target_username == current_user and status in ("suspended", "banned"):
+        flash("You cannot suspend or ban your own account.", "danger")
+        return redirect(url_for("admin.manage_users"))
+
+    if target_username == admin_config_user and status in ("suspended", "banned"):
+        flash("Cannot suspend or ban the primary administrator account.", "danger")
+        return redirect(url_for("admin.manage_users"))
+
+    # Hierarchy protection: Moderators cannot modify administrators
+    target_user_obj = current_app.user_model.get_by_username(target_username)
+    if target_user_obj and target_user_obj.get("role") == "admin" and actor_role != "admin" and current_user != admin_config_user:
+        flash("Moderators cannot modify the status of administrator accounts.", "danger")
+        return redirect(url_for("admin.manage_users"))
+
+    current_app.user_model.update_status(target_username, status)
     current_app.audit_model.log_action(
         actor=session["username"],
         action="UPDATE_USER_STATUS",
-        target=username,
+        target=target_username,
         metadata={"new_status": status},
         ip_address=request.remote_addr or "",
     )
-    flash(f"Updated status for {username} to {status}.", "info")
+    flash(f"Updated status for {target_username} to {status}.", "info")
     return redirect(url_for("admin.manage_users"))
 
 

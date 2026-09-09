@@ -2,6 +2,7 @@
 import time
 
 from flask import Blueprint, current_app, jsonify, render_template, request
+from ..extensions import limiter
 
 api_bp = Blueprint("api", __name__)
 
@@ -68,6 +69,7 @@ def health():
 # ──────────────────────────────────────────────────────────────────
 
 @api_bp.route("/v1/posts", methods=["GET"])
+@limiter.limit("60 per minute")
 def api_list_posts():
     page = request.args.get("page", 1, type=int)
     search = request.args.get("search", "")
@@ -87,6 +89,7 @@ def api_list_posts():
 
 
 @api_bp.route("/v1/posts/<post_id>", methods=["GET"])
+@limiter.limit("60 per minute")
 def api_get_post(post_id):
     post = current_app.post_model.get_by_id_no_increment(post_id)
     if not post or post.get("status") != "published":

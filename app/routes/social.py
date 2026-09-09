@@ -2,6 +2,7 @@
 Social routes: Likes, Bookmarks, Follows, Personalized Feed, and Notification Center.
 """
 from flask import Blueprint, current_app, flash, jsonify, redirect, render_template, request, session, url_for
+from app.extensions import limiter
 from app.utils.decorators import login_required
 from app.utils.security import is_safe_redirect_url
 
@@ -17,6 +18,7 @@ def _safe_referrer_redirect(default_endpoint="posts.index", **kwargs):
 
 @social_bp.route("/like/<post_id>", methods=["POST"])
 @login_required
+@limiter.limit("30 per minute")
 def toggle_like(post_id):
     username = session["username"]
     post = current_app.post_model.get_by_id_no_increment(post_id)
@@ -47,6 +49,7 @@ def toggle_like(post_id):
 
 @social_bp.route("/bookmark/<post_id>", methods=["POST"])
 @login_required
+@limiter.limit("30 per minute")
 def toggle_bookmark(post_id):
     username = session["username"]
     post = current_app.post_model.get_by_id_no_increment(post_id)
@@ -80,6 +83,7 @@ def bookmarks():
 
 @social_bp.route("/follow/<author>", methods=["POST"])
 @login_required
+@limiter.limit("30 per minute")
 def toggle_follow(author):
     username = session["username"]
     if username.lower() == author.lower():

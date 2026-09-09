@@ -25,6 +25,7 @@ from flask import (
     url_for,
 )
 
+from ..extensions import limiter
 from ..utils.decorators import author_required, login_required
 from ..utils.security import (
     allowed_extension,
@@ -156,8 +157,11 @@ def view_post(post_id: str):
 
 
 @posts_bp.route("/preview", methods=["POST"])
+@limiter.limit("30 per minute")
 def preview_markdown():
     content = request.form.get("content", "")
+    if len(content) > 50000:
+        return jsonify({"error": "Content exceeds 50,000 character limit."}), 400
     rendered = _render_markdown(content)
     return jsonify({"html": rendered})
 
@@ -194,6 +198,9 @@ def create():
             return render_template("create.html", title=title, content=content, categories=categories), 400
         if not content:
             flash("Content is required.", "danger")
+            return render_template("create.html", title=title, content=content, categories=categories), 400
+        if len(content) > 50000:
+            flash("Content must be 50,000 characters or less.", "danger")
             return render_template("create.html", title=title, content=content, categories=categories), 400
 
         image_key, upload_error = _handle_image_upload()
@@ -242,6 +249,14 @@ def edit_post(post_id: str, post: dict):
 
         if not title or not content:
             flash("Title and content are required.", "danger")
+            return render_template("edit.html", post=post, categories=categories), 400
+
+        if len(title) > 200:
+            flash("Title must be 200 characters or less.", "danger")
+            return render_template("edit.html", post=post, categories=categories), 400
+
+        if len(content) > 50000:
+            flash("Content must be 50,000 characters or less.", "danger")
             return render_template("edit.html", post=post, categories=categories), 400
 
         image_key = post.get("image_key")

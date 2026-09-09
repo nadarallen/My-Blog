@@ -27,6 +27,7 @@ from flask import (
 from ..extensions import limiter
 from ..utils.security import (
     is_safe_redirect_url,
+    is_valid_external_url,
     is_valid_password,
     is_valid_username,
 )
@@ -222,6 +223,12 @@ def edit_profile():
         location = request.form.get("location", "").strip()
         avatar_url = request.form.get("avatar_url", "").strip()
         cover_url = request.form.get("cover_url", "").strip()
+
+        # Validate external URLs to prevent javascript:/data: injection
+        for field_name, url_val in [("Website", website), ("Avatar URL", avatar_url), ("Cover URL", cover_url)]:
+            if url_val and not is_valid_external_url(url_val):
+                flash(f"Invalid URL format for {field_name}. Only http:// and https:// links are permitted.", "danger")
+                return render_template("profile_edit.html", user=user_obj), 400
 
         update_data = {
             "display_name": display_name,

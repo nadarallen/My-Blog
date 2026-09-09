@@ -50,9 +50,14 @@ def test_production_security_headers(client):
     res = client.get("/")
     assert res.status_code == 200
     assert res.headers.get("X-Content-Type-Options") == "nosniff"
-    assert res.headers.get("X-Frame-Options") == "SAMEORIGIN"
+    assert res.headers.get("X-Frame-Options") == "DENY"
     assert res.headers.get("Referrer-Policy") == "strict-origin-when-cross-origin"
     assert "default-src" in res.headers.get("Content-Security-Policy", "")
+
+    # Test HSTS header when accessed via HTTPS proto
+    res_https = client.get("/", headers={"X-Forwarded-Proto": "https"})
+    assert "Strict-Transport-Security" in res_https.headers
+    assert "max-age=31536000" in res_https.headers["Strict-Transport-Security"]
 
 
 def test_account_deletion_flow(client, app):

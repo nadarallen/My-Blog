@@ -1,5 +1,4 @@
 import html
-from xml.sax.saxutils import escape as xml_escape
 
 from flask import Blueprint, current_app, Response, render_template, url_for
 
@@ -9,7 +8,7 @@ seo_bp = Blueprint("seo", __name__)
 def _safe_xml(val) -> str:
     if not val:
         return ""
-    return xml_escape(html.unescape(str(val)))
+    return html.escape(html.unescape(str(val)), quote=True)
 
 
 @seo_bp.route("/sitemap.xml")

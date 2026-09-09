@@ -69,6 +69,7 @@ class UserModel:
             "reset_token": "",
             "reset_token_expires": "",
             "status": "active",
+            "session_version": 1,
             "created_at": now,
             "updated_at": now,
         }
@@ -113,6 +114,7 @@ class UserModel:
                 user.setdefault("role", "user")
                 user.setdefault("status", "active")
                 user.setdefault("display_name", username)
+                user.setdefault("session_version", 1)
             return user
         except Exception:
             return None
@@ -164,16 +166,17 @@ class UserModel:
             return False
 
     def update_role(self, username: str, role: str) -> bool:
-        """Update user RBAC role (user, author, moderator, admin)."""
+        """Update user RBAC role (user, author, moderator, admin) and invalidate existing sessions."""
         username = username.strip().lower()
         try:
             self.table.update_item(
                 Key={"username": username},
-                UpdateExpression="SET #r = :r, updated_at = :u",
+                UpdateExpression="SET #r = :r, updated_at = :u ADD session_version :val",
                 ExpressionAttributeNames={"#r": "role"},
                 ExpressionAttributeValues={
                     ":r": role,
                     ":u": datetime.now(timezone.utc).isoformat(),
+                    ":val": 1,
                 },
                 ConditionExpression=Attr("username").exists(),
             )
