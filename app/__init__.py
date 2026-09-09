@@ -50,6 +50,24 @@ def create_app(config_name: str = "production") -> Flask:
 
     # ── AWS clients (use IAM role on EC2 — no keys needed) ───────
     region = app.config["AWS_REGION"]
+
+    # In development mode, auto-activate offline mock if no AWS credentials exist locally
+    if app.config.get("FLASK_ENV") == "development" and (
+        os.environ.get("USE_OFFLINE_MOCK_AWS", "").lower() == "true"
+        or boto3.Session().get_credentials() is None
+    ):
+        try:
+            from moto import mock_aws
+            _mock = mock_aws()
+            _mock.start()
+            app._aws_mock = _mock
+            os.environ.setdefault("AWS_ACCESS_KEY_ID", "mock-access-key")
+            os.environ.setdefault("AWS_SECRET_ACCESS_KEY", "mock-secret-key")
+            os.environ.setdefault("AWS_DEFAULT_REGION", region)
+            _init_local_mock_resources(app, region)
+        except ImportError:
+            pass
+
     app.dynamodb = boto3.resource("dynamodb", region_name=region)
     app.s3 = boto3.client("s3", region_name=region)
 
@@ -74,10 +92,17 @@ def create_app(config_name: str = "production") -> Flask:
     app.settings_model = SettingsModel(app.dynamodb, app.config.get("DYNAMODB_SETTINGS_TABLE", "myblog-settings"))
     app.report_model = ReportModel(app.dynamodb, app.config.get("DYNAMODB_REPORTS_TABLE", "myblog-reports"))
 
+    # Seed sample data in local mock mode if active
+    if hasattr(app, "_aws_mock"):
+        _seed_local_mock_data(app)
+
     # Ensure admin user has admin role
     admin_user = app.config.get("ADMIN_USERNAME", "admin")
-    if app.user_model.exists(admin_user):
-        app.user_model.update_role(admin_user, "admin")
+    try:
+        if app.user_model.exists(admin_user):
+            app.user_model.update_role(admin_user, "admin")
+    except Exception:
+        pass
 
     # ── Services ─────────────────────────────────────────────────
     from .services.scheduler import scheduler
@@ -250,3 +275,100 @@ def _setup_logging(app: Flask) -> None:
         handler.setLevel(logging.INFO)
         app.logger.addHandler(handler)
     app.logger.setLevel(logging.INFO)
+
+
+def _init_local_mock_resources(app: Flask, region: str) -> None:
+    """Initialize in-memory DynamoDB tables and S3 bucket for local offline dev preview."""
+    ddb = boto3.resource("dynamodb", region_name=region)
+    s3 = boto3.client("s3", region_name=region)
+
+    tables = [
+        (app.config.get("DYNAMODB_POSTS_TABLE", "myblog-posts-dev"), "post_id"),
+        (app.config.get("DYNAMODB_USERS_TABLE", "myblog-users-dev"), "username"),
+        (app.config.get("DYNAMODB_COMMENTS_TABLE", "myblog-comments"), "comment_id"),
+        (app.config.get("DYNAMODB_INTERACTIONS_TABLE", "myblog-interactions"), "interaction_id"),
+        (app.config.get("DYNAMODB_NOTIFICATIONS_TABLE", "myblog-notifications"), "notification_id"),
+        (app.config.get("DYNAMODB_AUDIT_TABLE", "myblog-audit"), "log_id"),
+        (app.config.get("DYNAMODB_TAXONOMY_TABLE", "myblog-taxonomy"), "item_id"),
+        (app.config.get("DYNAMODB_SETTINGS_TABLE", "myblog-settings"), "key"),
+        (app.config.get("DYNAMODB_REPORTS_TABLE", "myblog-reports"), "report_id"),
+    ]
+
+    for table_name, pk in tables:
+        try:
+            ddb.create_table(
+                TableName=table_name,
+                KeySchema=[{"AttributeName": pk, "KeyType": "HASH"}],
+                AttributeDefinitions=[{"AttributeName": pk, "AttributeType": "S"}],
+                BillingMode="PAY_PER_REQUEST",
+            )
+        except Exception:
+            pass
+
+    bucket = app.config.get("S3_BUCKET", "myblog-images-dev")
+    try:
+        s3.create_bucket(
+            Bucket=bucket,
+            CreateBucketConfiguration={"LocationConstraint": region} if region != "us-east-1" else {},
+        )
+    except Exception:
+        pass
+
+
+def _seed_local_mock_data(app: Flask) -> None:
+    """Seed initial sample blog posts, categories, and admin user for local preview."""
+    admin_user = app.config.get("ADMIN_USERNAME", "admin")
+    if not app.user_model.exists(admin_user):
+        app.user_model.create(
+            username=admin_user,
+            password="AdminPassword123!",
+            email="admin@myblog.local",
+            role="admin",
+            display_name="Admin Author",
+        )
+
+    # Seed categories
+    app.taxonomy_model.create_category("Engineering", "engineering", "Software architecture and development")
+    app.taxonomy_model.create_category("Design", "design", "UI/UX, accessibility and hand-drawn aesthetics")
+    app.taxonomy_model.create_category("Cloud", "cloud", "AWS serverless and infrastructure")
+
+    # Seed sample posts if empty
+    posts, total = app.post_model.get_all_paginated(page=1, per_page=1)
+    if total == 0:
+        app.post_model.create(
+            title="Building a Cloud-Native Blog on AWS with DynamoDB & S3",
+            content="""# Welcome to My-Blog!
+
+This is a production-grade blogging platform built with **Python Flask**, **AWS DynamoDB**, and **Amazon S3**.
+
+### Architecture Highlights
+- **Serverless Data Layer**: Fast NoSQL performance with DynamoDB single-table design principles.
+- **Doodle-Glassmorphism UI**: High-contrast typography, hand-drawn aesthetic, and dark mode.
+- **Enterprise Security**: Argon2id password hashing, CSRF tokens, and Bleach XSS protection.
+
+> "Simplicity is prerequisite for reliability." — Edsger W. Dijkstra
+
+Feel free to explore, create new posts, and test out features!
+""",
+            author=admin_user,
+            category_slug="cloud",
+            tags=["aws", "dynamodb", "cloud-native"],
+            status="published",
+        )
+        app.post_model.create(
+            title="Doodle-Glassmorphism: Elevating Web Aesthetic with Hand-Drawn Flair",
+            content="""# Doodle-Glassmorphism UI
+
+In a world filled with generic cookie-cutter dashboards, our custom **Doodle-Glassmorphism** styling breathes warmth and personality into the user experience.
+
+### Key Elements
+1. **Typography**: Pairing Google Fonts *Outfit* (body) with *Caveat* (handwritten accents).
+2. **Subtle Grids**: Playful paper-like background dot grids.
+3. **High Contrast**: Fully WCAG AA compliant across Light and Dark themes.
+""",
+            author=admin_user,
+            category_slug="design",
+            tags=["ui-ux", "design-system", "css"],
+            status="published",
+        )
+
