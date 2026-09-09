@@ -6,7 +6,10 @@
 <div class="row">
     <div class="col-lg-3 mb-4">
         <div class="card-doodle p-3">
-            <h5 class="mb-3">🛡️ Admin Console</h5>
+            <h5 class="mb-3 d-flex align-items-center gap-2">
+                <svg class="icon-svg icon-md text-primary" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
+                <span>Admin Console</span>
+            </h5>
             <div class="list-group list-group-flush">
                 <a href="{{ url_for('admin.dashboard') }}" class="list-group-item list-group-item-action">Overview</a>
                 <a href="{{ url_for('admin.manage_users') }}" class="list-group-item list-group-item-action active fw-bold">Users & Roles</a>
@@ -20,7 +23,10 @@
 
     <div class="col-lg-9">
         <div class="card-doodle p-4">
-            <h2 class="mb-4">👥 User & Role Management</h2>
+            <h2 class="mb-4 d-flex align-items-center gap-2">
+                <svg class="icon-svg icon-lg text-primary" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
+                <span>User & Role Management</span>
+            </h2>
             <div class="table-responsive">
                 <table class="table align-middle">
                     <thead>

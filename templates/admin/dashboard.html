@@ -6,7 +6,10 @@
 <div class="row">
     <div class="col-lg-3 mb-4">
         <div class="card-doodle p-3">
-            <h5 class="mb-3">🛡️ Admin Console</h5>
+            <h5 class="mb-3 d-flex align-items-center gap-2">
+                <svg class="icon-svg icon-md text-primary" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
+                <span>Admin Console</span>
+            </h5>
             <div class="list-group list-group-flush">
                 <a href="{{ url_for('admin.dashboard') }}" class="list-group-item list-group-item-action active fw-bold">Overview</a>
                 <a href="{{ url_for('admin.manage_users') }}" class="list-group-item list-group-item-action">Users & Roles</a>
@@ -49,7 +52,10 @@
         </div>
 
         <div class="card-doodle p-4">
-            <h4 class="mb-3">📋 Recent Security & Admin Activity</h4>
+            <h4 class="mb-3 d-flex align-items-center gap-2">
+                <svg class="icon-svg icon-md text-primary" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"></path><rect x="8" y="2" width="8" height="4" rx="1" ry="1"></rect></svg>
+                <span>Recent Security & Admin Activity</span>
+            </h4>
             <div class="table-responsive">
                 <table class="table align-middle mb-0">
                     <thead>

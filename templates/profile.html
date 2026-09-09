@@ -19,7 +19,7 @@
                         <h2 class="mb-0">{{ profile_user.display_name or profile_user.username }}</h2>
                         <div class="text-muted">@{{ profile_user.username }} · <span class="badge bg-secondary">{{ profile_user.role | title }}</span></div>
                         {% if profile_user.bio %}<p class="mt-2 mb-0">{{ profile_user.bio }}</p>{% endif %}
-                        {% if profile_user.location %}<small class="text-muted">📍 {{ profile_user.location }}</small>{% endif %}
+                        {% if profile_user.location %}<small class="text-muted d-inline-flex align-items-center mt-1"><svg class="icon-svg icon-xs me-1" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>{{ profile_user.location }}</small>{% endif %}
                     </div>
                 </div>
 
@@ -54,8 +54,8 @@
                             <p class="text-muted small">{{ post.excerpt or post.content[:100] }}...</p>
                         </div>
                         <div class="d-flex justify-content-between text-muted small border-top pt-2">
-                            <span>⏱️ {{ post.read_time }} min</span>
-                            <span>👁️ {{ post.views }} views</span>
+                            <span><svg class="icon-svg icon-xs me-1" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>{{ post.read_time }} min</span>
+                            <span><svg class="icon-svg icon-xs me-1" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>{{ post.views }} views</span>
                         </div>
                     </div>
                 </div>

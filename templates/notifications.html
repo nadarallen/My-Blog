@@ -6,16 +6,25 @@
 <div class="row justify-content-center">
     <div class="col-lg-8">
         <div class="card-doodle p-4">
-            <h2 class="mb-4">🔔 Notifications Center</h2>
+            <h2 class="mb-4 d-flex align-items-center gap-2">
+                <svg class="icon-svg icon-lg text-primary" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path><path d="M13.73 21a2 2 0 0 1-3.46 0"></path></svg>
+                <span>Notifications Center</span>
+            </h2>
             {% for n in notifications %}
                 <div class="border-bottom py-3 d-flex align-items-center justify-content-between">
                     <div>
-                        <span>
-                            {% if n.type == 'like' %}❤️
-                            {% elif n.type == 'comment' %}💬
-                            {% elif n.type == 'follow' %}👤
-                            {% elif n.type == 'mention' %}📣
-                            {% else %}💡{% endif %}
+                        <span class="d-inline-flex align-items-center">
+                            {% if n.type == 'like' %}
+                                <svg class="icon-svg icon-sm text-danger" viewBox="0 0 24 24" fill="currentColor" stroke="none"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg>
+                            {% elif n.type == 'comment' %}
+                                <svg class="icon-svg icon-sm text-primary" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
+                            {% elif n.type == 'follow' %}
+                                <svg class="icon-svg icon-sm text-success" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="8.5" cy="7" r="4"></circle><line x1="20" y1="8" x2="20" y2="14"></line><line x1="23" y1="11" x2="17" y2="11"></line></svg>
+                            {% elif n.type == 'mention' %}
+                                <svg class="icon-svg icon-sm text-warning" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path><path d="M13.73 21a2 2 0 0 1-3.46 0"></path></svg>
+                            {% else %}
+                                <svg class="icon-svg icon-sm text-info" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
+                            {% endif %}
                         </span>
                         <span class="ms-2">{{ n.message }}</span>
                         <div class="text-muted small ms-4">{{ n.created_at[:16].replace('T', ' ') }}</div>

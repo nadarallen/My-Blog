@@ -27,7 +27,13 @@
             <header class="post-header mb-4">
                 <div class="d-flex align-items-center justify-content-between mb-2">
                     <span class="badge bg-secondary rounded-pill px-3 py-1">{{ post.category_slug | title }}</span>
-                    <span class="text-muted small">⏱️ {{ post.read_time }} min read · 👁️ {{ post.views }} views</span>
+                    <span class="text-muted small d-inline-flex align-items-center">
+                        <svg class="icon-svg icon-xs me-1" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+                        {{ post.read_time }} min read
+                        <span class="mx-2">·</span>
+                        <svg class="icon-svg icon-xs me-1" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+                        {{ post.views }} views
+                    </span>
                 </div>
                 
                 <h1 class="post-title my-2">{{ post.title }}</h1>
@@ -51,21 +57,26 @@
                         {% if 'username' in session %}
                             <form method="POST" action="{{ url_for('social.toggle_like', post_id=post.post_id) }}" class="d-inline me-2">
                                 <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-                                <button type="submit" class="btn btn-sm {% if has_liked %}btn-danger{% else %}btn-outline-danger{% endif %}">
-                                    ❤️ {{ post.likes_count }}
+                                <button type="submit" class="btn btn-sm {% if has_liked %}btn-danger{% else %}btn-outline-danger{% endif %} d-inline-flex align-items-center gap-1">
+                                    <svg class="icon-svg icon-xs" viewBox="0 0 24 24" fill="{% if has_liked %}currentColor{% else %}none{% endif %}" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg>
+                                    <span>{{ post.likes_count }}</span>
                                 </button>
                             </form>
 
                             <form method="POST" action="{{ url_for('social.toggle_bookmark', post_id=post.post_id) }}" class="d-inline me-2">
                                 <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-                                <button type="submit" class="btn btn-sm {% if has_bookmarked %}btn-warning{% else %}btn-outline-warning{% endif %}">
-                                    🔖 Saved
+                                <button type="submit" class="btn btn-sm {% if has_bookmarked %}btn-warning{% else %}btn-outline-warning{% endif %} d-inline-flex align-items-center gap-1">
+                                    <svg class="icon-svg icon-xs" viewBox="0 0 24 24" fill="{% if has_bookmarked %}currentColor{% else %}none{% endif %}" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path></svg>
+                                    <span>{% if has_bookmarked %}Saved{% else %}Save{% endif %}</span>
                                 </button>
                             </form>
                         {% endif %}
 
                         {% if session.get('username') == post.author or session.get('role') in ('admin', 'moderator') %}
-                            <a href="{{ url_for('posts.edit_post', post_id=post.post_id) }}" class="btn btn-sm btn-outline-secondary me-2">✏️ Edit</a>
+                            <a href="{{ url_for('posts.edit_post', post_id=post.post_id) }}" class="btn btn-sm btn-outline-secondary me-2 d-inline-flex align-items-center gap-1">
+                                <svg class="icon-svg icon-xs" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
+                                <span>Edit</span>
+                            </a>
                         {% endif %}
                     </div>
                 </div>
@@ -94,47 +105,104 @@
             {% endif %}
         </article>
 
-        <!-- Comments Section -->
-        <section class="card-doodle p-4 mb-4" id="comments">
-            <h3 class="mb-4">💬 Discussion ({{ comments | length }})</h3>
+        <!-- Reddit-Inspired Discussion Section -->
+        <section class="reddit-discussion" id="comments">
+            <div class="reddit-discussion-header">
+                <h3 class="reddit-discussion-title">
+                    <svg class="icon-svg icon-md text-primary" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
+                    <span>Discussion</span>
+                    <span class="badge bg-secondary rounded-pill fs-6 ms-2">{{ comments | length }}</span>
+                </h3>
+            </div>
 
+            <!-- Reddit-Style Comment Composer -->
             {% if 'username' in session %}
-                <form method="POST" action="{{ url_for('comments.add_comment', post_id=post.post_id) }}" class="mb-4">
+                <form method="POST" action="{{ url_for('comments.add_comment', post_id=post.post_id) }}" class="reddit-composer">
                     <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-                    <div class="mb-2">
-                        <textarea name="content" class="form-control form-control-doodle" rows="3" placeholder="Join the discussion... (@mention users)" required></textarea>
+                    <div class="reddit-composer-header">
+                        <span class="avatar-circle-sm me-1">{{ session['username'][:2].upper() }}</span>
+                        <span>Comment as <a href="{{ url_for('auth.author_profile', username=session['username']) }}" class="text-dark fw-bold">u/{{ session['username'] }}</a></span>
                     </div>
-                    <button type="submit" class="btn-doodle-primary btn-sm">Post Comment</button>
+                    <textarea name="content" class="reddit-composer-textarea" rows="3" placeholder="What are your thoughts? (@mention users to notify them)" required></textarea>
+                    <div class="reddit-composer-footer">
+                        <small class="text-muted">Markdown formatting supported</small>
+                        <button type="submit" class="reddit-btn-comment">Comment</button>
+                    </div>
                 </form>
             {% else %}
-                <div class="alert alert-info">
-                    <a href="{{ url_for('auth.login') }}">Log in</a> to join the conversation.
+                <div class="alert alert-info d-flex align-items-center mb-4">
+                    <svg class="icon-svg icon-md me-2" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
+                    <span><a href="{{ url_for('auth.login') }}" class="fw-bold">Log in</a> or <a href="{{ url_for('auth.register') }}" class="fw-bold">sign up</a> to join the conversation.</span>
                 </div>
             {% endif %}
 
-            <!-- Comments List -->
-            <div class="comments-list">
+            <!-- Reddit Comment Tree -->
+            <div class="reddit-comments-tree">
                 {% for comment in comments %}
-                    <div class="comment-card border-bottom py-3 ms-{{ comment.depth * 3 }}" id="comment-{{ comment.comment_id }}">
-                        <div class="d-flex justify-content-between align-items-center mb-1">
-                            <div class="d-flex align-items-center">
-                                <div class="avatar-circle-sm me-2">{{ comment.author[:2].upper() }}</div>
-                                <div>
-                                    <strong>{{ comment.author }}</strong>
-                                    <span class="text-muted small ms-2">{{ comment.created_at[:16].replace('T', ' ') }}</span>
-                                </div>
-                            </div>
-                            {% if session.get('username') == comment.author or session.get('role') in ('admin', 'moderator') %}
-                                <form method="POST" action="{{ url_for('comments.delete_comment', comment_id=comment.comment_id) }}" class="d-inline">
-                                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-                                    <button type="submit" class="btn btn-sm text-danger border-0">Delete</button>
-                                </form>
-                            {% endif %}
+                    <div class="reddit-comment-item ms-{{ comment.depth * 3 }}" id="comment-{{ comment.comment_id }}">
+                        <!-- Vote Pillar -->
+                        <div class="reddit-vote-pillar">
+                            <button type="button" class="reddit-vote-btn up" title="Upvote" onclick="this.classList.toggle('text-danger')">
+                                <svg class="icon-svg icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="18 15 12 9 6 15"></polyline></svg>
+                            </button>
+                            <span class="reddit-score">1</span>
+                            <button type="button" class="reddit-vote-btn down" title="Downvote" onclick="this.classList.toggle('text-primary')">
+                                <svg class="icon-svg icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+                            </button>
                         </div>
-                        <p class="mb-1">{{ comment.content }}</p>
+
+                        <!-- Thread Connector Line -->
+                        <div class="reddit-thread-line"></div>
+
+                        <!-- Comment Main Container -->
+                        <div class="reddit-comment-container">
+                            <div class="reddit-meta-bar">
+                                <span class="avatar-circle-sm">{{ comment.author[:2].upper() }}</span>
+                                <a href="{{ url_for('auth.author_profile', username=comment.author) }}" class="reddit-author-link">
+                                    u/{{ comment.author }}
+                                </a>
+                                {% if comment.author == post.author %}
+                                    <span class="reddit-op-badge" title="Original Poster">OP</span>
+                                {% endif %}
+                                <span class="text-muted">·</span>
+                                <span class="reddit-timestamp">
+                                    <svg class="icon-svg icon-xs me-1" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+                                    {{ comment.created_at[:16].replace('T', ' ') }}
+                                </span>
+                            </div>
+
+                            <div class="reddit-comment-content">
+                                {{ comment.content }}
+                            </div>
+
+                            <!-- Reddit Actions Bar -->
+                            <div class="reddit-actions-bar">
+                                <button type="button" class="reddit-action-btn" onclick="document.querySelector('.reddit-composer-textarea')?.focus()">
+                                    <svg class="icon-svg icon-xs" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
+                                    Reply
+                                </button>
+                                <button type="button" class="reddit-action-btn" onclick="navigator.clipboard.writeText(window.location.href.split('#')[0] + '#comment-{{ comment.comment_id }}'); alert('Link copied to clipboard!');">
+                                    <svg class="icon-svg icon-xs" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"></circle><circle cx="6" cy="12" r="3"></circle><circle cx="18" cy="19" r="3"></circle><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"></line><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"></line></svg>
+                                    Share
+                                </button>
+
+                                {% if session.get('username') == comment.author or session.get('role') in ('admin', 'moderator') %}
+                                    <form method="POST" action="{{ url_for('comments.delete_comment', comment_id=comment.comment_id) }}" class="d-inline">
+                                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                                        <button type="submit" class="reddit-action-btn delete-btn">
+                                            <svg class="icon-svg icon-xs" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
+                                            Delete
+                                        </button>
+                                    </form>
+                                {% endif %}
+                            </div>
+                        </div>
                     </div>
                 {% else %}
-                    <p class="text-muted">No comments yet. Be the first to share your thoughts!</p>
+                    <div class="text-center py-4 text-muted">
+                        <svg class="icon-svg icon-lg mb-2 opacity-50" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
+                        <p class="mb-0">No comments yet. Be the first to start the discussion!</p>
+                    </div>
                 {% endfor %}
             </div>
         </section>
@@ -142,7 +210,10 @@
         <!-- Related Posts -->
         {% if related_posts %}
             <section class="card-doodle p-4">
-                <h4 class="mb-3">📚 Related Stories</h4>
+                <h4 class="mb-3 d-flex align-items-center gap-2">
+                    <svg class="icon-svg icon-md text-primary" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path></svg>
+                    <span>Related Stories</span>
+                </h4>
                 <div class="row">
                     {% for rel in related_posts %}
                         <div class="col-md-4 mb-3">

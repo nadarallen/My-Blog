@@ -5,7 +5,10 @@
 {% block content %}
 <div class="row justify-content-center">
     <div class="col-lg-9">
-        <h2 class="mb-4">🔖 Saved Bookmarks</h2>
+        <h2 class="mb-4 d-flex align-items-center gap-2">
+            <svg class="icon-svg icon-lg text-warning" viewBox="0 0 24 24" fill="currentColor" stroke="none"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path></svg>
+            <span>Saved Bookmarks</span>
+        </h2>
         <div class="row">
             {% for post in posts %}
                 <div class="col-md-6 mb-4">
@@ -15,8 +18,8 @@
                             <p class="text-muted small">{{ post.excerpt or post.content[:100] }}...</p>
                         </div>
                         <div class="d-flex justify-content-between text-muted small border-top pt-2">
-                            <span>✍️ {{ post.author }}</span>
-                            <span>⏱️ {{ post.read_time }} min</span>
+                            <span><svg class="icon-svg icon-xs me-1" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"></path><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"></path></svg>{{ post.author }}</span>
+                            <span><svg class="icon-svg icon-xs me-1" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>{{ post.read_time }} min</span>
                         </div>
                     </div>
                 </div>

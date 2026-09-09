@@ -11,51 +11,88 @@
         </div>
     {% endif %}
 
-    <!-- Posts Grid -->
-    <div class="row">
+    <!-- Pinterest-Inspired Posts Grid -->
+    <div class="pin-grid">
         {% for post in posts %}
-            <div class="col-md-6 col-lg-4 mb-4">
-                <article class="post-card">
+            <article class="pin-card">
+                <div class="pin-media-wrapper">
                     {% if post['image_url'] %}
-                        <div class="post-card-img-wrapper">
-                            <img src="{{ post['image_url'] }}" class="post-card-img" alt="{{ post['title'] }}">
-                        </div>
+                        <a href="{{ url_for('posts.view_post', post_id=post['post_id']) }}">
+                            <img src="{{ post['image_url'] }}" class="pin-media-img" alt="{{ post['title'] }}" loading="lazy">
+                        </a>
+                    {% else %}
+                        <a href="{{ url_for('posts.view_post', post_id=post['post_id']) }}" class="pin-media-fallback text-decoration-none">
+                            <div class="text-center">
+                                <svg class="icon-svg icon-xl mb-1 opacity-75" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path></svg>
+                                <div class="fw-bold">{{ post.get('category_slug', 'Story') | title }}</div>
+                            </div>
+                        </a>
                     {% endif %}
-                    
-                    <div class="post-card-body">
-                        <div class="post-card-meta mb-2 d-flex justify-content-between text-muted small">
-                            <span>By <strong>{{ post['author'] }}</strong></span>
-                            <span>{{ post['read_time'] }} min read</span>
-                        </div>
-                        
-                        <h3 class="post-card-title">
-                            <a href="{{ url_for('posts.view_post', post_id=post['post_id']) }}">{{ post['title'] }}</a>
-                        </h3>
-                        
-                        <p class="post-card-excerpt">
-                            {{ post['content'][:150] }}{% if post['content']|length > 150 %}...{% endif %}
-                        </p>
-                        
-                        <div class="post-card-footer mt-auto pt-3 d-flex align-items-center justify-content-between">
-                            <div class="post-stats text-muted small d-flex align-items-center">
-                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="me-1"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
-                                <span>{{ post['views'] }}</span>
-                            </div>
-                            
-                            <div class="post-actions">
-                                <a href="{{ url_for('posts.view_post', post_id=post['post_id']) }}" class="btn-doodle-link">Read Story →</a>
-                            </div>
+
+                    <!-- Pinterest Quick Save Pill -->
+                    {% if 'username' in session %}
+                        <form method="POST" action="{{ url_for('social.toggle_bookmark', post_id=post['post_id']) }}" class="d-inline">
+                            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                            <button type="submit" class="pin-save-btn" title="Save story">
+                                <svg class="icon-svg icon-xs" viewBox="0 0 24 24" fill="currentColor" stroke="none"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path></svg>
+                                Save
+                            </button>
+                        </form>
+                    {% else %}
+                        <a href="{{ url_for('auth.login') }}" class="pin-save-btn" title="Log in to save">
+                            <svg class="icon-svg icon-xs" viewBox="0 0 24 24" fill="currentColor" stroke="none"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path></svg>
+                            Save
+                        </a>
+                    {% endif %}
+                </div>
+
+                <div class="pin-body">
+                    {% if post.get('category_slug') %}
+                        <span class="pin-category-badge">{{ post['category_slug'] | title }}</span>
+                    {% endif %}
+
+                    <h3 class="pin-title">
+                        <a href="{{ url_for('posts.view_post', post_id=post['post_id']) }}">{{ post['title'] }}</a>
+                    </h3>
+
+                    <p class="pin-excerpt">
+                        {{ post['content'][:140] }}{% if post['content']|length > 140 %}...{% endif %}
+                    </p>
+
+                    <div class="pin-footer">
+                        <a href="{{ url_for('auth.author_profile', username=post['author']) }}" class="pin-author-pill">
+                            <span class="avatar-circle-sm">{{ post['author'][:2].upper() }}</span>
+                            <span>{{ post['author'] }}</span>
+                        </a>
+
+                        <div class="pin-stats-row">
+                            <span title="Read time">
+                                <svg class="icon-svg icon-xs me-1" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+                                {{ post['read_time'] }}m
+                            </span>
+                            <span title="Views">
+                                <svg class="icon-svg icon-xs me-1" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+                                {{ post['views'] }}
+                            </span>
                         </div>
                     </div>
-                </article>
-            </div>
+                </div>
+            </article>
         {% endfor %}
     </div>
 
     <!-- Empty State -->
     {% if not posts %}
         <div class="empty-state text-center py-5">
-            <div class="empty-doodle-icon mb-3">✍️</div>
+            <div class="empty-doodle-icon mb-3">
+                <svg class="icon-svg text-primary" width="60" height="60" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                    <polyline points="14 2 14 8 20 8"></polyline>
+                    <line x1="16" y1="13" x2="8" y2="13"></line>
+                    <line x1="16" y1="17" x2="8" y2="17"></line>
+                    <polyline points="10 9 9 9 8 9"></polyline>
+                </svg>
+            </div>
             <h3>No stories here yet</h3>
             <p class="text-muted">
                 {% if search %}
@@ -78,7 +115,10 @@
             <ul class="pagination-list d-flex align-items-center">
                 {% if page > 1 %}
                     <li class="pagination-item">
-                        <a href="{{ url_for('posts.index', page=page-1, q=search) }}" class="pagination-link">« Prev</a>
+                        <a href="{{ url_for('posts.index', page=page-1, q=search) }}" class="pagination-link">
+                            <svg class="icon-svg icon-xs me-1" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg>
+                            Prev
+                        </a>
                     </li>
                 {% endif %}
                 
@@ -88,7 +128,10 @@
                 
                 {% if page < total_pages %}
                     <li class="pagination-item">
-                        <a href="{{ url_for('posts.index', page=page+1, q=search) }}" class="pagination-link">Next »</a>
+                        <a href="{{ url_for('posts.index', page=page+1, q=search) }}" class="pagination-link">
+                            Next
+                            <svg class="icon-svg icon-xs ms-1" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+                        </a>
                     </li>
                 {% endif %}
             </ul>

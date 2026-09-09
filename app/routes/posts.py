@@ -221,7 +221,7 @@ def create():
             seo_description=seo_description,
         )
         current_app.logger.info("Post created [id=%s] by '%s'", post_id, session["username"])
-        flash("Post saved successfully! ✨" if status == "draft" else "Post published! ✨", "success")
+        flash("Post saved successfully!" if status == "draft" else "Post published!", "success")
         return redirect(url_for("posts.view_post", post_id=post_id))
 
     return render_template("create.html", categories=categories)

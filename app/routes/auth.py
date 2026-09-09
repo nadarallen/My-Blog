@@ -133,7 +133,7 @@ def login():
             current_app.logger.info(
                 "Login success: '%s' (role: %s, ver: %s) from %s", username, session["role"], session["session_version"], request.remote_addr
             )
-            flash(f"Welcome back, {username}! 👋", "success")
+            flash(f"Welcome back, {username}!", "success")
 
             # ── Safe redirect ─────────────────────────────────────
             # Validate ?next= to prevent open redirect attacks

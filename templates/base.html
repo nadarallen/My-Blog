@@ -25,9 +25,11 @@
             <div class="d-flex align-items-center justify-content-between w-100-mobile">
                 <a class="site-logo" href="{{ url_for('posts.index') }}">My-Blog<span>.</span></a>
                 <div class="d-flex align-items-center d-md-none">
-                    <button id="themeToggleMobile" class="btn-theme-toggle me-2" title="Toggle Light/Dark Theme" aria-label="Toggle Dark Mode">🌙</button>
+                    <button id="themeToggleMobile" class="btn-theme-toggle me-2" title="Toggle Light/Dark Theme" aria-label="Toggle Dark Mode">
+                        <svg class="icon-svg icon-md" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
+                    </button>
                     <button class="navbar-toggler-doodle" type="button" aria-controls="mobileNav" aria-expanded="false" aria-label="Toggle navigation" id="navToggle">
-                        ☰
+                        <svg class="icon-svg icon-md" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
                     </button>
                 </div>
             </div>
@@ -59,7 +61,8 @@
                     {% endif %}
                     <a href="{{ url_for('posts.create') }}" class="btn-doodle-sm ms-1 me-2">Write Post</a>
                     <a href="{{ url_for('auth.author_profile', username=session['username']) }}" class="user-greeting me-2">
-                        👤 <strong>{{ session['username'] }}</strong>
+                        <svg class="icon-svg icon-sm me-1" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+                        <strong>{{ session['username'] }}</strong>
                     </a>
                     <form method="POST" action="{{ url_for('auth.logout') }}" class="d-inline">
                         <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
@@ -69,7 +72,9 @@
                     <a href="{{ url_for('auth.login') }}" class="nav-link-custom ms-2 me-2">Login</a>
                     <a href="{{ url_for('auth.register') }}" class="btn-doodle-sm ms-1">Register</a>
                 {% endif %}
-                <button id="themeToggle" class="btn-theme-toggle ms-2 d-none d-md-flex" title="Toggle Light/Dark Theme" aria-label="Toggle Dark Mode">🌙</button>
+                <button id="themeToggle" class="btn-theme-toggle ms-2 d-none d-md-flex" title="Toggle Light/Dark Theme" aria-label="Toggle Dark Mode">
+                    <svg class="icon-svg icon-md" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
+                </button>
             </nav>
         </div>
     </header>
@@ -83,10 +88,15 @@
             {% for category, message in messages %}
             <div class="alert-doodle alert-doodle-{{ category }} alert-dismissible fade show" role="alert">
                 <span class="alert-icon">
-                    {% if category == 'success' %}✨
-                    {% elif category == 'danger' %}🚨
-                    {% elif category == 'warning' %}⚠️
-                    {% else %}💡{% endif %}
+                    {% if category == 'success' %}
+                        <svg class="icon-svg text-success" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
+                    {% elif category == 'danger' %}
+                        <svg class="icon-svg text-danger" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>
+                    {% elif category == 'warning' %}
+                        <svg class="icon-svg text-warning" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path><line x1="12" y1="9" x2="12" y2="13"></line><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>
+                    {% else %}
+                        <svg class="icon-svg text-primary" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
+                    {% endif %}
                 </span>
                 <span class="alert-text">{{ message }}</span>
                 <button type="button" class="btn-doodle-close" data-bs-dismiss="alert" aria-label="Close">×</button>
