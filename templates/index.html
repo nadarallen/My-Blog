@@ -21,10 +21,17 @@
                             <img src="{{ post['image_url'] }}" class="pin-media-img" alt="{{ post['title'] }}" loading="lazy">
                         </a>
                     {% else %}
-                        <a href="{{ url_for('posts.view_post', post_id=post['post_id']) }}" class="pin-media-fallback text-decoration-none">
+                        <a href="{{ url_for('posts.view_post', post_id=post['post_id']) }}" class="pin-media-fallback fallback-{{ (post.get('category_slug') or 'general') | lower }} text-decoration-none">
                             <div class="text-center">
-                                <svg class="icon-svg icon-xl mb-1 opacity-75" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path></svg>
-                                <div class="fw-bold">{{ post.get('category_slug', 'Story') | title }}</div>
+                                {% set cat = (post.get('category_slug') or '') | lower %}
+                                {% if cat == 'cloud' %}
+                                    <svg class="icon-svg icon-xl mb-1" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M17.5 19H9a7 7 0 1 1 6.71-9h1.79a4.5 4.5 0 1 1 0 9Z"></path></svg>
+                                {% elif cat == 'design' %}
+                                    <svg class="icon-svg icon-xl mb-1" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19l7-7 3 3-7 7-3-3z"></path><path d="M18 13l-1.5-7.5L2 2l3.5 14.5L13 18l5-5z"></path><path d="M2 2l7.586 7.586"></path><circle cx="11" cy="11" r="2"></circle></svg>
+                                {% else %}
+                                    <svg class="icon-svg icon-xl mb-1" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path></svg>
+                                {% endif %}
+                                <div class="fallback-cat-title">{{ post.get('category_slug', 'Story') | title }}</div>
                             </div>
                         </a>
                     {% endif %}

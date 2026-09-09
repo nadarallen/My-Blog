@@ -644,6 +644,24 @@ body.dark-theme .doodle-preview-box {
     color: #f8fafc;
 }
 
+body.dark-theme .btn-doodle,
+body.dark-theme .btn-doodle-sm {
+    background-color: var(--primary);
+    color: #ffffff !important;
+    border-color: var(--border-color);
+}
+
+body.dark-theme .btn-doodle-logout {
+    background-color: rgba(255, 255, 255, 0.08);
+    color: #f8fafc;
+    border-color: var(--border-color);
+}
+
+body.dark-theme .btn-doodle-logout:hover {
+    background-color: var(--danger-light);
+    color: #f87171;
+}
+
 body.dark-theme .post-card-title a,
 body.dark-theme h1, body.dark-theme h2, body.dark-theme h3, body.dark-theme h4, body.dark-theme h5 {
     color: #f8fafc;
@@ -968,26 +986,70 @@ body.dark-theme .navbar-toggler-doodle {
     transform: scale(1.04);
 }
 
-/* Fallback Art Banner when no image exists */
+/* Fallback Art Banner when no image exists — Hand-Drawn Doodle & Editorial Washes */
 .pin-media-fallback {
     min-height: 160px;
-    background: linear-gradient(135deg, #6366f1 0%, #a855f7 50%, #ec4899 100%);
+    background: linear-gradient(135deg, #f8f6f0 0%, #ede6d6 100%);
     display: flex;
     align-items: center;
     justify-content: center;
     padding: 24px;
-    color: #ffffff;
+    color: var(--text-primary);
     position: relative;
     overflow: hidden;
+    transition: transform 0.3s ease, filter 0.3s ease;
 }
 
 .pin-media-fallback::after {
     content: '';
     position: absolute;
     inset: 0;
-    background-image: radial-gradient(rgba(255, 255, 255, 0.2) 1px, transparent 1px);
-    background-size: 14px 14px;
+    background-image: radial-gradient(rgba(30, 41, 59, 0.12) 1.2px, transparent 1.2px);
+    background-size: 16px 16px;
     pointer-events: none;
+}
+
+.pin-media-fallback .icon-svg {
+    stroke-width: 1.8;
+    color: currentColor;
+    transition: transform 0.3s ease;
+}
+
+.pin-card:hover .pin-media-fallback .icon-svg {
+    transform: scale(1.12) rotate(-3deg);
+}
+
+.pin-media-fallback .fallback-cat-title {
+    font-weight: 700;
+    font-size: 1.08rem;
+    letter-spacing: -0.01em;
+    color: currentColor;
+}
+
+/* Category-specific Harmonious Washes (Doodle & Editorial Watercolor Washes) */
+.pin-media-fallback.fallback-design {
+    background: linear-gradient(135deg, #ede9fe 0%, #e0e7ff 100%);
+    color: #4338ca;
+}
+.pin-media-fallback.fallback-design::after {
+    background-image: radial-gradient(rgba(67, 56, 202, 0.14) 1.2px, transparent 1.2px);
+}
+
+.pin-media-fallback.fallback-cloud {
+    background: linear-gradient(135deg, #e0f2fe 0%, #dbeafe 100%);
+    color: #0369a1;
+}
+.pin-media-fallback.fallback-cloud::after {
+    background-image: radial-gradient(rgba(3, 105, 161, 0.14) 1.2px, transparent 1.2px);
+}
+
+.pin-media-fallback.fallback-tech,
+.pin-media-fallback.fallback-technology {
+    background: linear-gradient(135deg, #ecfdf5 0%, #d1fae5 100%);
+    color: #047857;
+}
+.pin-media-fallback.fallback-tech::after {
+    background-image: radial-gradient(rgba(4, 120, 87, 0.14) 1.2px, transparent 1.2px);
 }
 
 /* Floating Pinterest-style Quick Save Button */
@@ -1388,4 +1450,38 @@ body.dark-theme .reddit-action-btn:hover {
 
 body.dark-theme .reddit-thread-line {
     background: rgba(148, 163, 184, 0.3);
+}
+
+/* Fallback Banner Dark Theme Washes */
+body.dark-theme .pin-media-fallback {
+    background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+    color: #f8fafc;
+}
+body.dark-theme .pin-media-fallback::after {
+    background-image: radial-gradient(rgba(255, 255, 255, 0.1) 1.2px, transparent 1.2px);
+}
+
+body.dark-theme .pin-media-fallback.fallback-design {
+    background: linear-gradient(135deg, #2e1065 0%, #1e1b4b 100%);
+    color: #c7d2fe;
+}
+body.dark-theme .pin-media-fallback.fallback-design::after {
+    background-image: radial-gradient(rgba(199, 210, 254, 0.12) 1.2px, transparent 1.2px);
+}
+
+body.dark-theme .pin-media-fallback.fallback-cloud {
+    background: linear-gradient(135deg, #082f49 0%, #0c4a6e 100%);
+    color: #7dd3fc;
+}
+body.dark-theme .pin-media-fallback.fallback-cloud::after {
+    background-image: radial-gradient(rgba(125, 211, 252, 0.12) 1.2px, transparent 1.2px);
+}
+
+body.dark-theme .pin-media-fallback.fallback-tech,
+body.dark-theme .pin-media-fallback.fallback-technology {
+    background: linear-gradient(135deg, #064e3b 0%, #065f46 100%);
+    color: #a7f3d0;
+}
+body.dark-theme .pin-media-fallback.fallback-tech::after {
+    background-image: radial-gradient(rgba(167, 243, 208, 0.12) 1.2px, transparent 1.2px);
 }
